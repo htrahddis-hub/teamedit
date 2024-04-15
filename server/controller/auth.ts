@@ -83,31 +83,31 @@ export async function verify(token: string): Promise<string> {
 	try {
 		if (token.startsWith("Bearer")) {
 
-			const decoded: any = jwt.verify(token, process.env.TOP_SECRET as string);
+			const decoded: any = jwt.verify(token.substring(7), process.env.TOP_SECRET as string);
 			const User = await UserModel.findById(decoded.User_Id);
-			if (User?.token === token)
-				return "successful";
+			if (User?.token === token.substring(7))
+				return JSON.stringify({ email: User.email, message: "successful" });
 			else
-				return "failure";
+				return JSON.stringify({ email: "", message: "failure" });
 		}
 		else
-			return "failure";
+			return JSON.stringify({ email: "", message: "failure" });
 
 	}
 	catch (err) {
-		return "failure";
+		return JSON.stringify({ email: "", message: "failure" });
 	}
 }
 
-export async function createRoom(req:string): Promise<string> {
+export async function createRoom(req: string): Promise<string> {
 	try {
 		console.log(req);
 		const data = io.of('/').adapter.rooms;
-		
-		console.log( data);
 
-		
-		return "happy" 
+		console.log(data);
+
+
+		return "happy"
 
 	}
 	catch (err) {

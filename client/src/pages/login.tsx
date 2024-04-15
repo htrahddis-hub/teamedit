@@ -16,6 +16,8 @@ import Paper from '@mui/material/Paper';
 import './login.css';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
+import { useAppDispatch,useAppSelector } from '../store';
+import { login } from '../actions/user';
 
 function Copyright(props: any) {
   return (
@@ -60,9 +62,12 @@ export default function Login() {
   // default values are false beacuse error prop should be false 
   const [validEmail, setValidEmail] = React.useState<boolean>(false);
   const [validPassword, setValidPassword] = React.useState<boolean>(false);
+  const dispatch=useAppDispatch();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
+    console.log(user);
+    
     setUser((prevUser) => {
       return {
         ...prevUser,
@@ -75,8 +80,13 @@ export default function Login() {
     event.preventDefault();
     setValidEmail(!validateEmail(user.email));
     setValidPassword(!validatePassword(user.password));
-    if (validEmail && validPassword)
+    console.log(user,validEmail,validPassword);
+    
+    if (!validEmail && !validPassword){
       console.log(user);
+      
+      dispatch(login(user));
+    }
   };
 
   return (
