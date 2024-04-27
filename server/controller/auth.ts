@@ -81,6 +81,8 @@ export async function login(user: IUser): Promise<string> {
 
 export async function verify(token: string): Promise<string> {
 	try {
+		console.log(token);
+		
 		if (token.startsWith("Bearer")) {
 
 			const decoded: any = jwt.verify(token.substring(7), process.env.TOP_SECRET as string);

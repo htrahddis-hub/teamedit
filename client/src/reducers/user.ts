@@ -17,27 +17,31 @@ export interface IAuthenication {
   message?: string
 }
 
+export interface IState {
+  value: IAuthenication
+}
 
-const initialState: IAuthenication = {
-  auth: false,
-  isSignedin: false,
-  email: "",
-
+const initialState: IState = {
+  value: {
+    auth: false,
+    isSignedin: false,
+    email: "",
+  }
 }
 
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {},
-  extraReducers: (builder: ActionReducerMapBuilder<IAuthenication>) => {
+  extraReducers: (builder: ActionReducerMapBuilder<IState>) => {
     builder.addCase(signup.fulfilled, (state, action) => {
-      state = action.payload;
+      state.value = action.payload;
     });
     builder.addCase(login.fulfilled, (state, action) => {
-      state = action.payload;
+      state.value = action.payload;
     });
     builder.addCase(authorize.fulfilled, (state, action) => {
-      state = action.payload;
+      state.value = action.payload;
     });
     // builder.addCase(resetPassword.fulfilled, (state, action) => {
     //   state.value = action.payload;
@@ -46,13 +50,13 @@ const userSlice = createSlice({
     //   state.value = action.payload;
     // });
     builder.addCase(logout.fulfilled, (state, action) => {
-      state = action.payload;
+      state.value = action.payload;
     });
   },
 });
 
 // export const { Authorize, Login, Logout, Signup } = userSlice.actions;
 
-export const getUser = (state: RootState) => state.user;
+export const getUser = (state: RootState) => state.user.value;
 
 export default userSlice.reducer;

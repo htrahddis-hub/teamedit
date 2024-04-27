@@ -16,8 +16,9 @@ import Paper from '@mui/material/Paper';
 import './login.css';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import { useAppDispatch,useAppSelector } from '../store';
+import { useAppDispatch, useAppSelector } from '../store';
 import { login } from '../actions/user';
+import { IAuthenication } from '../reducers/user';
 
 function Copyright(props: any) {
   return (
@@ -49,10 +50,14 @@ export interface IUser {
   password: string
 }
 
+export interface IProps {
+  user1: IAuthenication
+}
+
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-export default function Login() {
+export default function Login({ user1 }: IProps) {
 
   const [user, setUser] = React.useState<IUser>({
     email: "",
@@ -60,14 +65,15 @@ export default function Login() {
   });
 
   // default values are false beacuse error prop should be false 
-  const [validEmail, setValidEmail] = React.useState<boolean>(false);
-  const [validPassword, setValidPassword] = React.useState<boolean>(false);
-  const dispatch=useAppDispatch();
-
+  const [validEmail, setValidEmail] = React.useState<boolean>(true);
+  const [validPassword, setValidPassword] = React.useState<boolean>(true);
+  const dispatch = useAppDispatch();
+  console.log(user1);
+  
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    console.log(user);
-    
+    if (name === 'email') setValidEmail(true);
+    else setValidPassword(true);
     setUser((prevUser) => {
       return {
         ...prevUser,
@@ -78,13 +84,9 @@ export default function Login() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setValidEmail(!validateEmail(user.email));
-    setValidPassword(!validatePassword(user.password));
-    console.log(user,validEmail,validPassword);
-    
-    if (!validEmail && !validPassword){
-      console.log(user);
-      
+    setValidEmail(validateEmail(user.email));
+    setValidPassword(validatePassword(user.password));
+    if (validEmail && validPassword) {
       dispatch(login(user));
     }
   };
@@ -161,8 +163,8 @@ export default function Login() {
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
               <TextField
-                error={validEmail}
-                helperText={!validEmail || "not a valid email"}
+                error={!validEmail}
+                helperText={validEmail ? "" : "not a valid email"}
                 margin="normal"
                 required
                 fullWidth
@@ -175,7 +177,8 @@ export default function Login() {
                 autoFocus
               />
               <TextField
-                error={validPassword}
+                error={!validPassword}
+                helperText={validPassword ? "" : "must contains A-Z,a-z,0-9,@$!%*?&"}
                 margin="normal"
                 required
                 fullWidth

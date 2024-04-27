@@ -53,12 +53,24 @@ export const login = createAsyncThunk("user/login", async (user: IUser): Promise
 export const authorize = createAsyncThunk("user/authorize", async () => {
   try {
     let token = decodeURIComponent(document.cookie);
-    const token1 = { secret_token: token.substring(6) };
-    const { data } = await axios.post(url + "verify", token);
-    if (data.message === "successful") return { isSignedin: false, email: data.email, message: "Successful", auth: true};
-    else return { isSignedin: false, email: "", message: "Failure", auth: false};
+    const token1 = token.substring(6);
+    const { data } = await axios.post(url + "verify", {}, { headers: { 'authorization': `Bearer ${token1}` } });
+    // console.log("hello");
+
+    if (data.message === "successful") {
+      // console.log("success");
+
+      return { isSignedin: false, email: data.email, message: "Successful", auth: true };
+    }
+
+    else {
+      // console.log("fail");
+      return { isSignedin: false, email: "", message: "Failure", auth: false };
+    }
+
   } catch (err) {
-    return {isSignedin: false, email: "", message: "Failure", auth: false};
+
+    return { isSignedin: false, email: "", message: "Failure", auth: false };
   }
 });
 
@@ -89,9 +101,9 @@ export const authorize = createAsyncThunk("user/authorize", async () => {
 export const logout = createAsyncThunk("user/logout", async () => {
   try {
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    return { isSignedin: false, email: "", message: "Logged out", auth: false};
+    return { isSignedin: false, email: "", message: "Logged out", auth: false };
   } catch (err) {
     console.log(err);
-    return { isSignedin: false, email: "", message: "Error", auth: true}
+    return { isSignedin: false, email: "", message: "Error", auth: true }
   }
 });
