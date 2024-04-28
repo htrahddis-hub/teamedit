@@ -28,7 +28,7 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.get("/", (req, res) => {
   res.send("hello world");
 });
-app.use('/auth', router);
+app.use('/auth', router); 
 
 var data: Array<string> = [];
 
@@ -51,6 +51,10 @@ io.on("connection", (socket) => {
 
   socket.on("join room", (data) => {
     socket.join(data.room);
+  })
+
+  socket.on("createFile",(data)=>{
+    
   })
 
 });

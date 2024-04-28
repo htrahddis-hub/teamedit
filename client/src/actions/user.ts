@@ -9,6 +9,9 @@ export interface IUser {
   email: string;
   password: string;
   token?: string;
+  Lname?: string;
+  Fname?: string;
+  confirmpassword?: string;
 }
 
 export const signup = createAsyncThunk("user/signup", async (user: IUser): Promise<IAuthenication> => {

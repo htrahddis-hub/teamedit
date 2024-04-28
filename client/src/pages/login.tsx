@@ -19,6 +19,7 @@ import Toolbar from '@mui/material/Toolbar';
 import { useAppDispatch, useAppSelector } from '../store';
 import { login } from '../actions/user';
 import { IAuthenication } from '../reducers/user';
+import { validateEmail, validatePassword } from '../util';
 
 function Copyright(props: any) {
   return (
@@ -31,18 +32,6 @@ function Copyright(props: any) {
       {'.'}
     </Typography>
   );
-}
-
-function validateEmail(email: string): boolean {
-  const regexp = new RegExp(
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-  );
-  return regexp.test(email);
-};
-
-function validatePassword(password: string): boolean {
-  const regexp = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/);
-  return regexp.test(password);
 }
 
 export interface IUser {
@@ -69,7 +58,7 @@ export default function Login({ user1 }: IProps) {
   const [validPassword, setValidPassword] = React.useState<boolean>(true);
   const dispatch = useAppDispatch();
   console.log(user1);
-  
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     if (name === 'email') setValidEmail(true);

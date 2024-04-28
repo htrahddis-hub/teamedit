@@ -12,6 +12,14 @@ import { io } from "..";
 interface IUser {
 	email: string;
 	password: string;
+	Fname: string;
+	Lname: string;
+	otp?: string;
+	token?: string;
+}
+interface ILogin {
+	email: string;
+	password: string;
 	otp?: string;
 	token?: string;
 }
@@ -32,9 +40,19 @@ function validatePassword(password: string): boolean {
 	return regexp.test(password);
 }
 
+function validateName(name: string): boolean {
+	if (name.length > 0)
+		return true;
+	else
+		return false;
+}
+
 export async function signup(user: IUser): Promise<string> {
 	try {
-		if (validateEmail(user.email) && validatePassword(user.password)) {
+		if (validateEmail(user.email)
+			&& validatePassword(user.password)
+			&& validateName(user.Fname)
+			&& validateName(user.Lname)) {
 			user.password = await bcrypt.hash(user.password, 10);
 			const User = await UserModel.create(user);
 			if (User)
@@ -51,7 +69,7 @@ export async function signup(user: IUser): Promise<string> {
 	}
 }
 
-export async function login(user: IUser): Promise<string> {
+export async function login(user: ILogin): Promise<string> {
 	try {
 		const User = await UserModel.findOne({ email: user.email });
 		if (!User) {
@@ -82,7 +100,7 @@ export async function login(user: IUser): Promise<string> {
 export async function verify(token: string): Promise<string> {
 	try {
 		console.log(token);
-		
+
 		if (token.startsWith("Bearer")) {
 
 			const decoded: any = jwt.verify(token.substring(7), process.env.TOP_SECRET as string);

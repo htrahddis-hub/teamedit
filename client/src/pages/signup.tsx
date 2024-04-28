@@ -10,6 +10,26 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { validateEmail, validatePassword, validateName } from '../util';
+import { useAppDispatch, useAppSelector } from '../store';
+import { signup } from '../actions/user';
+
+
+interface IUser {
+  email: string;
+  password: string;
+  confirmpassword: string;
+  Fname: string;
+  Lname: string;
+}
+
+interface IUserCheck {
+  email: boolean;
+  password: boolean;
+  confirmpassword: boolean;
+  Fname: boolean;
+  Lname: boolean;
+}
 
 function Copyright(props: any) {
   return (
@@ -28,13 +48,59 @@ function Copyright(props: any) {
 const defaultTheme = createTheme();
 
 export default function SignUp() {
+
+  const [user, setUser] = React.useState<IUser>({
+    email: "",
+    password: "",
+    confirmpassword: "",
+    Fname: "",
+    Lname: ""
+  });
+  const [validUser, setValidUser] = React.useState<IUserCheck>({
+    email: true,
+    password: true,
+    confirmpassword: true,
+    Fname: true,
+    Lname: true,
+  });
+  const dispatch = useAppDispatch();
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+
+    setValidUser((prevUser) => {
+      return {
+        ...prevUser,
+        [name]: true,
+      };
+    });
+
+    setUser((prevUser) => {
+      return {
+        ...prevUser,
+        [name]: value,
+      };
+    });
+  };
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+    setValidUser({
+      email: validateEmail(user.email),
+      password: validatePassword(user.password),
+      confirmpassword: user.password === user.confirmpassword,
+      Fname: validateName(user.Fname),
+      Lname: validateName(user.Lname)
     });
+    if (user.password === user.confirmpassword
+      && validUser.Fname
+      && validUser.Lname
+      && validUser.email
+      && validUser.password
+      && validUser.confirmpassword) {
+      dispatch(signup(user));
+    }
+
   };
 
   return (
@@ -60,7 +126,11 @@ export default function SignUp() {
               <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="given-name"
-                  name="firstName"
+                  name="Fname"
+                  value={user.Fname}
+                  onChange={handleChange}
+                  helperText={validUser.Fname ? "" : "required"}
+                  error={!validUser.Fname}
                   required
                   fullWidth
                   id="firstName"
@@ -73,8 +143,12 @@ export default function SignUp() {
                   required
                   fullWidth
                   id="lastName"
-                  label="Last Name"
-                  name="lastName"
+                  label="Lname"
+                  name="Lname"
+                  value={user.Lname}
+                  onChange={handleChange}
+                  helperText={validUser.Lname ? "" : "required"}
+                  error={!validUser.Lname}
                   autoComplete="family-name"
                 />
               </Grid>
@@ -85,6 +159,10 @@ export default function SignUp() {
                   id="email"
                   label="Email Address"
                   name="email"
+                  value={user.email}
+                  onChange={handleChange}
+                  helperText={validUser.email ? "" : "not a valid email"}
+                  error={!validUser.email}
                   autoComplete="email"
                 />
               </Grid>
@@ -93,6 +171,10 @@ export default function SignUp() {
                   required
                   fullWidth
                   name="password"
+                  value={user.password}
+                  onChange={handleChange}
+                  helperText={validUser.password ? "" : "must contains A-Z,a-z,0-9,@$!%*?&"}
+                  error={!validUser.password}
                   label="Password"
                   type="password"
                   id="password"
@@ -103,7 +185,11 @@ export default function SignUp() {
                 <TextField
                   required
                   fullWidth
-                  name="password"
+                  name="confirmpassword"
+                  helperText={validUser.confirmpassword ? "" : "Password are not matching"}
+                  error={!validUser.confirmpassword}
+                  value={user.confirmpassword}
+                  onChange={handleChange}
                   label="Confirm Password"
                   type="password"
                   id="confirm-password"
