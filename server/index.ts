@@ -6,6 +6,7 @@ import bodyParser from "body-parser";
 import router from './routes';
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import { createFileSocket } from "./controller/file";
 
 const app = express();
 const httpServer = createServer(app);
@@ -28,7 +29,7 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.get("/", (req, res) => {
   res.send("hello world");
 });
-app.use('/auth', router); 
+app.use('/auth', router);
 
 var data: Array<string> = [];
 
@@ -53,8 +54,9 @@ io.on("connection", (socket) => {
     socket.join(data.room);
   })
 
-  socket.on("createFile",(data)=>{
-    
+  socket.on("createFile", (data) => {
+    console.log(data);
+    const filename=createFileSocket(data.filename, data.user).then();
   })
 
 });
@@ -63,5 +65,5 @@ io.on("connection", (socket) => {
 
 
 mongoose.connect(url)
-    .then(() => httpServer.listen(PORT, () => console.log(`Server running on port: ${PORT}`)))
-    .catch((error) => console.log(url));
+  .then(() => httpServer.listen(PORT, () => console.log(`Server running on port: ${PORT}`)))
+  .catch((error) => console.log(url));

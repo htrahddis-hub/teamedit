@@ -1,11 +1,13 @@
 import mongoose, { Model } from "mongoose";
+import { Types } from 'mongoose';
 
-interface IUser {
-    email:string;
-    password:string;
-    Fname:string;
-    Lname:string;
-    token?:string;
+export interface IUser {
+  email:string;
+  password:string;
+  Fname:string;
+  Lname:string;
+  token?:string;
+  file?:Types.ObjectId[];
 }
 
 const UserSchema = new mongoose.Schema<IUser>({
@@ -28,7 +30,9 @@ const UserSchema = new mongoose.Schema<IUser>({
   },
   token: {
     type: String
-  }
+  },
+  file: [{ type : Types.ObjectId, ref: 'file' }],
+  
 });
 
 const UserModel = mongoose.model<IUser>('user', UserSchema);

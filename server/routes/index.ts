@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { signup, login, verify , createRoom } from "../controller/auth";
+import { signup, login, verify, createRoom, verifymiddleware } from "../controller/auth";
 
 const router: Router = express.Router();
 
@@ -21,6 +21,10 @@ router.post('/verify', async function (req, res, next) {
 router.get('/room/:name', async function (req, res, next) {
     const message: string = await createRoom(req.params.name);
     res.send(message);
+});
+
+router.post('/file', verifymiddleware, async function (req, res, next) {
+    
 });
 
 export default router;

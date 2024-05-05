@@ -43,6 +43,9 @@ export default function Home() {
   }
 
   const createFile = (name: string) => {
+
+    console.log("here");
+    
     socket.emit('createFile', { fileName: name, user: user.email });
   }
 

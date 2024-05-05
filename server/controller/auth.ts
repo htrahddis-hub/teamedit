@@ -3,6 +3,7 @@ import UserModel from "../model/userModel";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { io } from "..";
+import { RequestHandler } from "express";
 // import { totp } from "otplib";
 // import nodemailer from "nodemailer";
 // import { log } from "console";
@@ -45,6 +46,27 @@ function validateName(name: string): boolean {
 		return true;
 	else
 		return false;
+}
+
+export const verifymiddleware: RequestHandler = async (req, res, next) => {
+  try {
+    const token = req.headers?.authorization as string;
+
+    if (token.startsWith("Bearer")) {
+
+      const decoded: any = jwt.verify(token.substring(7), process.env.TOP_SECRET as string);
+      const User = await UserModel.findById(decoded.User_Id);
+      if (User?.token === token.substring(7))
+        next();
+      else
+        res.status(401).send({ message: "unauthorized" });
+    }
+    else
+      res.status(401).send({ message: "unauthorized" });
+  }
+  catch (err) {
+    res.status(401).send({ message: "unauthorized" });
+  }
 }
 
 export async function signup(user: IUser): Promise<string> {
