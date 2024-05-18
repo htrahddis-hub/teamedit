@@ -12,7 +12,6 @@ const UserSchema = new mongoose.Schema<IFile>({
 
   content: {
     type: String,
-    required: true,
   },
   name: {
     type: String,

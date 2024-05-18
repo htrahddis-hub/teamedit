@@ -1,5 +1,6 @@
 import mongoose, { Model } from "mongoose";
 import { Types } from 'mongoose';
+import { IFile } from "./fileModel";
 
 export interface IUser {
   email:string;
@@ -7,7 +8,7 @@ export interface IUser {
   Fname:string;
   Lname:string;
   token?:string;
-  file?:Types.ObjectId[];
+  file?:Types.ObjectId[]|IFile[];
 }
 
 const UserSchema = new mongoose.Schema<IUser>({

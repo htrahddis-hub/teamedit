@@ -56,7 +56,7 @@ io.on("connection", (socket) => {
 
   socket.on("createFile", (data) => {
     console.log(data);
-    const filename=createFileSocket(data.filename, data.user).then();
+    createFileSocket(data.fileName, data.user).then((data)=>console.log(data));
   })
 
 });

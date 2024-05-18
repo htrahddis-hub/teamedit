@@ -22,6 +22,7 @@ export default function Home() {
 
   const user = useAppSelector(getUser);
   const [fileLoaded, setFileLoaded] = React.useState<string>('');
+  const [filename, setFilename] = React.useState<string>('');
 
   const manager = new Manager("http://localhost:3000", {
     autoConnect: false,
@@ -49,11 +50,22 @@ export default function Home() {
     socket.emit('createFile', { fileName: name, user: user.email });
   }
 
+  
+  const handleClick = () => {
+    
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilename(event.target.value);
+  };
 
 
   return (
     <div>
-      <>Editor team Enter the file name</>
+      <h1>Editor team</h1>
+      <p>enter the file to open</p>
+      <input value={filename} onChange={handleChange} required />
+      <button onClick={handleClick}>Open File</button>
       <File createFile={createFile} />
       <Editor user={user.email} message={message} />
     </div>

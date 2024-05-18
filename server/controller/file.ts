@@ -3,7 +3,6 @@ import UserModel from "../model/userModel";
 import { MiddlewareOptions } from "mongoose";
 
 
-
 export async function createFileSocket(filename: string, user: string): Promise<string> {
   try {
     const User = await UserModel.findOne({ email: user });
@@ -20,6 +19,23 @@ export async function createFileSocket(filename: string, user: string): Promise<
     return JSON.stringify({ filename: "", message: "failure" });
   }
   catch (err) {
+    console.log(err);
+    
     return JSON.stringify({ email: "", message: "failure" });
+  }
+}
+
+export async function fetchFiles(email:string):Promise<IFile[]> {
+  try{
+    const User = await UserModel.findOne({ email: email });
+    User?.populate('file');
+    console.log(User?.file);
+    if(User?.file)
+      return User.file;
+    else
+      return 
+  } catch(err){
+    console.log(err);
+    
   }
 }

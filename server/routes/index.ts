@@ -23,8 +23,8 @@ router.get('/room/:name', async function (req, res, next) {
     res.send(message);
 });
 
-router.post('/file', verifymiddleware, async function (req, res, next) {
-    
+router.post('/fetchfile', verifymiddleware, async function (req, res, next) {
+    const 
 });
 
 export default router;
