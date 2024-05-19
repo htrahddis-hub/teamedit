@@ -1,5 +1,4 @@
 import { prisma } from "../prisma";
-import { MiddlewareOptions, Types } from "mongoose";
 
 interface IFile {
   name: string;
