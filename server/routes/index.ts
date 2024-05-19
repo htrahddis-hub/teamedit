@@ -1,5 +1,6 @@
 import express, { Router } from "express";
 import { signup, login, verify, createRoom, verifymiddleware } from "../controller/auth";
+import { fetchFiles } from "../controller/file";
 
 const router: Router = express.Router();
 
@@ -23,8 +24,9 @@ router.get('/room/:name', async function (req, res, next) {
     res.send(message);
 });
 
-router.post('/fetchfile', verifymiddleware, async function (req, res, next) {
-    const 
+router.get('/fetchfiles', verifymiddleware, async function (req, res, next) {
+    const message: string = JSON.stringify(await fetchFiles(req.body.data.email));
+    res.send(message);
 });
 
 export default router;

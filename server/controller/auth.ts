@@ -1,9 +1,8 @@
-// import { MongooseError } from "mongoose";
-import UserModel from "../model/userModel";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { io } from "..";
 import { RequestHandler } from "express";
+import { prisma } from "../prisma";
 // import { totp } from "otplib";
 // import nodemailer from "nodemailer";
 // import { log } from "console";
@@ -11,41 +10,41 @@ import { RequestHandler } from "express";
 
 
 interface IUser {
-	email: string;
-	password: string;
-	Fname: string;
-	Lname: string;
-	otp?: string;
-	token?: string;
+  email: string;
+  password: string;
+  Fname: string;
+  Lname: string;
+  otp?: string;
+  token?: string;
 }
 interface ILogin {
-	email: string;
-	password: string;
-	otp?: string;
-	token?: string;
+  email: string;
+  password: string;
+  otp?: string;
+  token?: string;
 }
 
 interface IToken {
-	UserId: string;
+  UserId: string;
 }
 
 function validateEmail(email: string): boolean {
-	const regexp = new RegExp(
-		/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-	);
-	return regexp.test(email);
+  const regexp = new RegExp(
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  );
+  return regexp.test(email);
 };
 
 function validatePassword(password: string): boolean {
-	const regexp = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/);
-	return regexp.test(password);
+  const regexp = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/);
+  return regexp.test(password);
 }
 
 function validateName(name: string): boolean {
-	if (name.length > 0)
-		return true;
-	else
-		return false;
+  if (name.length > 0)
+    return true;
+  else
+    return false;
 }
 
 export const verifymiddleware: RequestHandler = async (req, res, next) => {
@@ -55,106 +54,143 @@ export const verifymiddleware: RequestHandler = async (req, res, next) => {
     if (token.startsWith("Bearer")) {
 
       const decoded: any = jwt.verify(token.substring(7), process.env.TOP_SECRET as string);
-      const User = await UserModel.findById(decoded.User_Id);
-      if (User?.token === token.substring(7))
+      const User = await prisma.user.findUnique({
+        where: {
+          id: decoded.User_Id,
+        },
+      });
+      console.log(User?.token);
+      console.log(token.substring(7));
+
+      if (User?.token === token.substring(7)) {
+        req.body.data = { email: User.email }
         next();
+      }
       else
-        res.status(401).send({ message: "unauthorized" });
+        res.status(401).send({ message: "unauthorized1" });
     }
     else
-      res.status(401).send({ message: "unauthorized" });
+      res.status(401).send({ message: "unauthorized2" });
   }
   catch (err) {
-    res.status(401).send({ message: "unauthorized" });
+    console.log(err);
+    res.status(401).send({ message: "unauthorized3" });
   }
 }
 
 export async function signup(user: IUser): Promise<string> {
-	try {
-		if (validateEmail(user.email)
-			&& validatePassword(user.password)
-			&& validateName(user.Fname)
-			&& validateName(user.Lname)) {
-			user.password = await bcrypt.hash(user.password, 10);
-			const User = await UserModel.create(user);
-			if (User)
-				return "successful";
-			else
-				return "failed";
-		}
-		else
-			return "not valid email or password";
-	}
-	catch (err) {
-		console.log(err);
-		return "User Already exist";
-	}
+  try {
+    if (validateEmail(user.email)
+      && validatePassword(user.password)
+      && validateName(user.Fname)
+      && validateName(user.Lname)) {
+      user.password = await bcrypt.hash(user.password, 10);
+      const User = await prisma.user.create({
+        data: {
+          email: user.email,
+          password: user.password,
+          firstname: user.Fname,
+          lastname: user.Lname
+        }
+      })
+      if (User)
+        return "successful";
+      else
+        return "failed";
+    }
+    else
+      return "not valid email or password";
+  }
+  catch (err) {
+    console.log(err);
+    return "User Already exist";
+  }
 }
 
 export async function login(user: ILogin): Promise<string> {
-	try {
-		const User = await UserModel.findOne({ email: user.email });
-		if (!User) {
-			return JSON.stringify({ token: "", message: "emailId or password is invalid" });
-		}
+  try {
+    const User = await prisma.user.findUnique({
+      where: {
+        email: user.email,
+      },
+    });
+    if (!User) {
+      return JSON.stringify({ token: "", message: "emailId or password is invalid" });
+    }
 
-		const validate = await bcrypt.compare(user.password, User.password);
-		if (!validate) {
-			return JSON.stringify({ token: "", message: "emailId or password is invalid" });
-		}
+    const validate = await bcrypt.compare(user.password, User.password);
+    if (!validate) {
+      return JSON.stringify({ token: "", message: "emailId or password is invalid" });
+    }
 
-		const token = jwt.sign({ User_Id: User._id }, process.env.TOP_SECRET as string, {
-			expiresIn: "48h"
-		});
-		User.token = token;
+    const token = jwt.sign({ User_Id: User.id }, process.env.TOP_SECRET as string, {
+      expiresIn: "48h"
+    });
 
-		User.save();
-		const result: any = { token: User.token, message: "successful" }
-		return JSON.stringify(result);
 
-	}
-	catch (err) {
-		console.log(err);
-		return JSON.stringify({ token: "", message: "Internal Server Error" });
-	}
+    const updateUser = await prisma.user.update({
+      where: {
+        id: User.id,
+      },
+      data: {
+        token: token,
+      },
+    })
+
+    let result
+    if (updateUser)
+      result = { token: token, message: "successful" }
+    else
+      result = { token: "", message: "Internal Server Error" }
+    return JSON.stringify(result);
+
+  }
+  catch (err) {
+    console.log(err);
+    return JSON.stringify({ token: "", message: "Internal Server Error" });
+  }
 }
 
 export async function verify(token: string): Promise<string> {
-	try {
-		console.log(token);
+  try {
+    if (token.startsWith("Bearer")) {
 
-		if (token.startsWith("Bearer")) {
+      const decoded: any = jwt.verify(token.substring(7), process.env.TOP_SECRET as string);
+      const User = await prisma.user.findUnique({
+        where: {
+          id: decoded.User_Id,
+        },
+      });
+      if (User?.token === token.substring(7))
+        return JSON.stringify({ email: User.email, message: "successful" });
+      else
+        return JSON.stringify({ email: "", message: "failure" });
+    }
+    else
+      return JSON.stringify({ email: "", message: "failure" });
 
-			const decoded: any = jwt.verify(token.substring(7), process.env.TOP_SECRET as string);
-			const User = await UserModel.findById(decoded.User_Id);
-			if (User?.token === token.substring(7))
-				return JSON.stringify({ email: User.email, message: "successful" });
-			else
-				return JSON.stringify({ email: "", message: "failure" });
-		}
-		else
-			return JSON.stringify({ email: "", message: "failure" });
+  }
+  catch (err) {
+    console.log(err);
 
-	}
-	catch (err) {
-		return JSON.stringify({ email: "", message: "failure" });
-	}
+    return JSON.stringify({ email: "", message: "failure" });
+  }
 }
 
 export async function createRoom(req: string): Promise<string> {
-	try {
-		console.log(req);
-		const data = io.of('/').adapter.rooms;
+  try {
+    console.log(req);
+    const data = io.of('/').adapter.rooms;
 
-		console.log(data);
+    console.log(data);
 
 
-		return "happy"
+    return "happy"
 
-	}
-	catch (err) {
-		return "failure";
-	}
+  }
+  catch (err) {
+    return "failure";
+  }
 }
 
 // export async function forgot(email: string): Promise<string> {

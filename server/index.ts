@@ -6,6 +6,7 @@ import bodyParser from "body-parser";
 import router from './routes';
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import { prisma } from "./prisma";
 import { createFileSocket } from "./controller/file";
 
 const app = express();
@@ -61,9 +62,4 @@ io.on("connection", (socket) => {
 
 });
 
-
-
-
-mongoose.connect(url)
-  .then(() => httpServer.listen(PORT, () => console.log(`Server running on port: ${PORT}`)))
-  .catch((error) => console.log(url));
+httpServer.listen(PORT, () => console.log(`Server running on port: ${PORT}`));

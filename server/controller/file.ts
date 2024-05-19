@@ -1,18 +1,47 @@
-import FileModel, { IFile } from "../model/fileModel";
-import UserModel from "../model/userModel";
-import { MiddlewareOptions } from "mongoose";
+import { prisma } from "../prisma";
+import { MiddlewareOptions, Types } from "mongoose";
+
+interface IFile {
+  name: string;
+  content: string;
+  author?: number[];
+  createdAt?:Date;
+  UpdatedAt?:Date;
+}
 
 
 export async function createFileSocket(filename: string, user: string): Promise<string> {
   try {
-    const User = await UserModel.findOne({ email: user });
+    const User = await prisma.user.findUnique({
+      where: {
+        email: user,
+      },
+    });
     if (User) {
-      const file: IFile = { content: "", name: filename, authors: [] }
-      file.authors.push(User._id);
-      const File = (await FileModel.create(file));
+      const File = await prisma.file.create({
+        data: {
+          name: filename,
+          content: "",
+          author: {
+            connect: [{ id: User.id }]
+          },
+
+        },
+        include: {
+          author: true, // Include all posts in the returned object
+        },
+      });
       if (File) {
-        User.file?.push(File._id);
-        User.save();
+        const updateUser = await prisma.user.update({
+          where: {
+            id: User.id,
+          },
+          data: {
+            Files: {
+              connect: [{ id: File.id }]
+            }
+          },
+        });
         return JSON.stringify({ filename: File.name, message: "successful" });
       }
     }
@@ -20,22 +49,28 @@ export async function createFileSocket(filename: string, user: string): Promise<
   }
   catch (err) {
     console.log(err);
-    
+
     return JSON.stringify({ email: "", message: "failure" });
   }
 }
 
-export async function fetchFiles(email:string):Promise<IFile[]> {
-  try{
-    const User = await UserModel.findOne({ email: email });
-    User?.populate('file');
-    console.log(User?.file);
-    if(User?.file)
-      return User.file;
+export async function fetchFiles(email: string): Promise<IFile[]> {
+  try {
+    const User = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+      include: {
+        Files: true,
+      }
+    });
+    console.log(User?.Files);
+    if (User?.Files)
+      return User?.Files;
     else
-      return 
-  } catch(err){
+      return [];
+  } catch (err) {
     console.log(err);
-    
+    return [];
   }
 }
