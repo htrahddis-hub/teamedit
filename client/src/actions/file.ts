@@ -5,20 +5,30 @@ import { IFile } from "../reducers/file";
 // const url = "https://ecommsidd.onrender.com/auth/";
 const url = "http://localhost:3000/auth/";
 
+export interface IResponse {
+  data: IFile[];
+  isFetched: boolean;
+  message: string;
+}
 
-export const fetch = createAsyncThunk("user/signup", async (file: IFile): Promise<IFile> => {
+
+export const fetch = createAsyncThunk("file/fetch", async (): Promise<IResponse> => {
   try {
-    const { data } = await axios.post(url + "signup", file);
-    if (data === "successful")
-      return { isFetched: true, name: data?.name, message: "successfil", content: data.content };
-    else if (data === "Failed")
-      return { isFetched: false, name: "", message: "Failed to fetch", content: "" };
+    let token = decodeURIComponent(document.cookie);
+    const token1 = token.substring(6);
+    const { data } = await axios.get(url + "fetchfiles", { headers: { 'authorization': `Bearer ${token1}` } });
+    console.log(data.message);
+    
+    if (data.message === "successful")
+      return { isFetched: true, message: "successfil", data: data.files };
+    else if (data.message === "Failed")
+      return { isFetched: false, message: "Failed to fetch", data: [] };
     else
-      return { isFetched: false, name: "", message: "Failed to fetch", content: "" };
+      return { isFetched: false, message: "Failed to fetch", data: [] };
   } catch (err) {
     console.log(err);
     return {
-      isFetched: false, name: "", message: "Failed to fetch", content: ""
+      isFetched: false, message: "Failed to fetch", data: []
     };
   }
 });

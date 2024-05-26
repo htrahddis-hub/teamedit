@@ -25,7 +25,7 @@ router.get('/room/:name', async function (req, res, next) {
 });
 
 router.get('/fetchfiles', verifymiddleware, async function (req, res, next) {
-    const message: string = JSON.stringify(await fetchFiles(req.body.data.email));
+    const message: string = await fetchFiles(req.body.data.email);
     res.send(message);
 });
 

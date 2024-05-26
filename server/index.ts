@@ -4,7 +4,6 @@ import { Server } from "socket.io";
 import cors, { CorsRequest } from 'cors';
 import bodyParser from "body-parser";
 import router from './routes';
-import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { prisma } from "./prisma";
 import { createFileSocket } from "./controller/file";
@@ -56,7 +55,8 @@ io.on("connection", (socket) => {
   })
 
   socket.on("createFile", (data) => {
-    console.log(data);
+    console.log(data.user);
+    console.log(data.fileName);
     createFileSocket(data.fileName, data.user).then((data)=>console.log(data));
   })
 

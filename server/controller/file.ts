@@ -9,7 +9,7 @@ interface IFile {
 }
 
 
-export async function createFileSocket(filename: string, user: string): Promise<string> {
+export async function createFileSocket(fileName: string, user: string): Promise<string> {
   try {
     const User = await prisma.user.findUnique({
       where: {
@@ -19,7 +19,7 @@ export async function createFileSocket(filename: string, user: string): Promise<
     if (User) {
       const File = await prisma.file.create({
         data: {
-          name: filename,
+          name: fileName,
           content: "",
           author: {
             connect: [{ id: User.id }]
@@ -27,7 +27,7 @@ export async function createFileSocket(filename: string, user: string): Promise<
 
         },
         include: {
-          author: true, // Include all posts in the returned object
+          author: true,
         },
       });
       if (File) {
@@ -53,7 +53,7 @@ export async function createFileSocket(filename: string, user: string): Promise<
   }
 }
 
-export async function fetchFiles(email: string): Promise<IFile[]> {
+export async function fetchFiles(email: string): Promise<string> {
   try {
     const User = await prisma.user.findUnique({
       where: {
@@ -65,11 +65,11 @@ export async function fetchFiles(email: string): Promise<IFile[]> {
     });
     console.log(User?.Files);
     if (User?.Files)
-      return User?.Files;
+      return JSON.stringify({ files: User?.Files, message: "successful" });
     else
-      return [];
+      return JSON.stringify({ files: [], message: "failed" });
   } catch (err) {
     console.log(err);
-    return [];
+    return JSON.stringify({ files: [], message: "failed" });
   }
 }

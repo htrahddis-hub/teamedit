@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
-  fetch,
+  IResponse,
+  fetch
 } from "../actions/file";
 import type { ActionReducerMapBuilder } from '@reduxjs/toolkit'
 import { RootState } from "../store";
@@ -9,47 +10,36 @@ import { RootState } from "../store";
 export interface IFile {
   content: string;
   name: string;
-  authors?: number[];
-  isFetched?: boolean;
-  message?: string;
+  updatedAt:Date;
+  id:number;
 }
 
-export interface IState {
-  value: IFile[]
+export interface IStateF{
+  value: IResponse
 }
 
-const initialState: IState = {
-  value: []
+const initialState :IStateF={
+  value:{
+    data:[],
+    isFetched:false,
+    message:""
+  }
 }
 
 const fileSlice = createSlice({
   name: "file",
   initialState,
   reducers: {},
-  extraReducers: (builder: ActionReducerMapBuilder<IState>) => {
+  extraReducers: (builder: ActionReducerMapBuilder<IStateF>) => {
     builder.addCase(fetch.fulfilled, (state, action) => {
-      state.value.push(action.payload);
+      state.value = action.payload;
     });
-    // builder.addCase(login.fulfilled, (state, action) => {
-    //   state.value = action.payload;
-    // });
-    // builder.addCase(authorize.fulfilled, (state, action) => {
-    //   state.value = action.payload;
-    // });
-    // builder.addCase(resetPassword.fulfilled, (state, action) => {
-    //   state.value = action.payload;
-    // });
-    // builder.addCase(forgotPassword.fulfilled, (state, action) => {
-    //   state.value = action.payload;
-    // });
-    // builder.addCase(logout.fulfilled, (state, action) => {
-    //   state.value = action.payload;
-    // });
+
   },
 });
 
-// export const { Authorize, Login, Logout, Signup } = userSlice.actions;
+// export const { fetch } = fileSlice.actions;
 
-export const getUser = (state: RootState) => state.user.value;
+export const getFiles = (state: RootState) => state.files.value;
 
 export default fileSlice.reducer;

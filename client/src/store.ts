@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import UserReducer from "./reducers/user";
+import fileReducer from "./reducers/file";
 import { useDispatch, useSelector } from 'react-redux';
 
 export const store = configureStore({
   reducer: {
-    user: UserReducer
+    user: UserReducer,
+    files: fileReducer
   },
 });
 
