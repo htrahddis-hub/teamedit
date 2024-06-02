@@ -14,10 +14,10 @@ export default function Home() {
   const dispatch = useAppDispatch();
 
   React.useEffect(() => {
-    socket.connect();
+    // socket.connect();
     dispatch(fetch())
     return () => {
-      socket.disconnect();
+      // socket.disconnect();
     }
   }, []);
 
@@ -27,21 +27,21 @@ export default function Home() {
   const [fileLoaded, setFileLoaded] = React.useState<boolean>(false);
   const [filename, setFilename] = React.useState<string>('');
 
-  const manager = new Manager("http://localhost:3000", {
-    autoConnect: false,
-    query: { 'myusername_key': user.email },
-  });
-  const socket = manager.socket("/");
+  // const manager = new Manager("http://localhost:3000", {
+  //   autoConnect: false,
+  //   query: { 'myusername_key': user.email },
+  // });
+  // const socket = manager.socket("/");
 
 
 
   const message = (delta: Delta) => {
-    socket.emit('message', { ...delta, user: user.email });
+    // socket.emit('message', { ...delta, user: user.email });
   }
 
   const createFile = (name: string) => {
     console.log("here");
-    socket.emit('createFile', { fileName: name, user: user.email });
+    // socket.emit('createFile', { fileName: name, user: user.email });
   }
 
 

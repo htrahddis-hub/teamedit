@@ -7,6 +7,8 @@ import router from './routes';
 import dotenv from "dotenv";
 import { prisma } from "./prisma";
 import { createFileSocket } from "./controller/file";
+import { Delta } from "quill/core";
+import { operationHandler } from "./socket/operationHandler";
 
 const app = express();
 const httpServer = createServer(app);
@@ -31,9 +33,7 @@ app.get("/", (req, res) => {
 });
 app.use('/auth', router);
 
-var data: Array<string> = [];
-
-
+// var fileData: Array<Delta> = [];
 
 io.on("connection", (socket) => {
   console.log(io.engine.clientsCount + "on connect");
@@ -47,17 +47,19 @@ io.on("connection", (socket) => {
   })
 
   socket.on("message", (data) => {
-    console.log(data);
+    operationHandler(data);
   })
 
   socket.on("join room", (data) => {
     socket.join(data.room);
   })
 
+
+
   socket.on("createFile", (data) => {
     console.log(data.user);
     console.log(data.fileName);
-    createFileSocket(data.fileName, data.user).then((data)=>console.log(data));
+    createFileSocket(data.fileName, data.user).then((data) => console.log(data));
   })
 
 });

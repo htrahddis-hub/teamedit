@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import SignUp from "./pages/signup";
 import Login from "./pages/login";
 import Home from "./pages/home";
+import EditorHome from "./pages/editorHome";
 import SimpleBackdrop from "./components/Loader";
 import { useAppDispatch, useAppSelector } from "./store";
 import { authorize } from "./actions/user";
@@ -47,6 +48,10 @@ function App() {
           <Route
             path="/login"
             element={<Login user1={user} />}
+          />
+          <Route
+            path="/editor"
+            element={<EditorHome /> }
           />
         </Routes>
       </BrowserRouter>
