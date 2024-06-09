@@ -67,8 +67,8 @@ export default function Home() {
       <button onClick={handleClick}>Open File</button>
       <File createFile={createFile} /> */}
       <button onClick={handleClick}>get File</button>
-      {!fileLoaded ||
-        <Editor user={user.email} message={message} />}
+      {/* {!fileLoaded || */}
+         {/* <Editor user={user.email} message={message} />} */}
     </div>
   );
 }

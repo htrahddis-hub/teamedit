@@ -20,41 +20,22 @@ export interface IOps {
 
 export interface IProps {
   setDeltaArray: React.Dispatch<React.SetStateAction<Delta[] | undefined>>
+  delta: Delta | undefined
 }
 
 
-export default function EditorCore({ setDeltaArray }: IProps) {
+export default function EditorCore({ setDeltaArray, delta }: IProps) {
 
   const [value, setValue] = React.useState<string | Delta | undefined>('');
-  // const [deltaArray, setDeltaArray] = React.useState<Delta[] | undefined>([]);
-  // const [deltaArraySent, setDeltaArraySent] = React.useState<Delta[] | undefined>([]);
+  const handleClick1 = () => {
+    const death = new Delta().insert('White');
+    quill.current?.editor?.setContents(death);
+  }
 
-  // const MINUTE_MS = 500;
-  // const sentMessage = () => {
-  //   const delta = new Delta();
-  //   // if (deltaArray?.length ? deltaArray?.length > 0 : false) {
-  //     const sumWithInitial: Delta | undefined = deltaArray?.reduce((delta, curr) => delta.compose(curr), delta);
-  //     console.log(sumWithInitial);
-  //     message(sumWithInitial);
-  //     setDeltaArray([]);
-  //   // }
-  //   // else {
-  //     console.log("empty");
-  //   // }
-  // }
-
-  // React.useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     sentMessage();
-  //   }, MINUTE_MS);
-
-  //   return () => clearInterval(interval);
-  // });
-  // const handleClick = () => {
-  //   const death = new Delta().retain(5)
-  //     .insert('White')
-  //   quill.current?.editor?.updateContents(death)
-  // }
+  React.useEffect(() => {
+    if (delta)
+      quill.current?.editor?.setContents(delta);
+  }, [delta]);
 
   const quill = React.useRef<ReactQuill>();
   const handleChange = (value: any) => {
@@ -67,11 +48,9 @@ export default function EditorCore({ setDeltaArray }: IProps) {
   }
 
 
-  const handleClick1 = () => {
+  const handleClick = () => {
     console.log(quill.current?.getEditorContents);
     console.log(value);
-    
-    
   }
 
   return (

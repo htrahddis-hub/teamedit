@@ -15,21 +15,21 @@ export interface IOps {
 }
 export interface IProps {
   user: string,
-  message: Function
+  message: Function,
+  value: Delta | undefined,
+  setDeltaArraySent: React.Dispatch<React.SetStateAction<Delta[] | undefined>>
 }
 
-export default function Editor({ user, message }: IProps) {
+export default function Editor({ user, message, value, setDeltaArraySent }: IProps) {
 
-  const [value, setValue] = React.useState<string | Delta | undefined>('');
   const [deltaArray, setDeltaArray] = React.useState<Delta[] | undefined>([]);
-  const [deltaArraySent, setDeltaArraySent] = React.useState<Delta[] | undefined>([]);
 
   const MINUTE_MS = 1000;
   const sentMessage = () => {
     const delta = new Delta();
     if (deltaArray?.length ? deltaArray?.length > 0 : false) {
       const sumWithInitial: Delta | undefined = deltaArray?.reduce((delta, curr) => delta.compose(curr), delta);
-      console.log(sumWithInitial);
+      // console.log(sumWithInitial);
       message(sumWithInitial);
       if (sumWithInitial) {
         setDeltaArraySent(prev => {
@@ -48,21 +48,20 @@ export default function Editor({ user, message }: IProps) {
     const interval = setInterval(() => {
       sentMessage();
     }, MINUTE_MS);
-
     return () => clearInterval(interval);
   });
 
   const handleClick = () => {
     const delta = new Delta();
-    const sumWithInitial: Delta | undefined = deltaArraySent?.reduce((delta, curr) => delta.compose(curr), delta);
+    const sumWithInitial: Delta | undefined = deltaArray?.reduce((delta, curr) => delta.compose(curr), delta);
     console.log(sumWithInitial);
 
   }
 
   return (
     <div>
-      <EditorCore setDeltaArray={setDeltaArray} />
-      <button onClick={handleClick}>final</button>
+      <EditorCore setDeltaArray={setDeltaArray} delta={value}/>
+      <button onClick={handleClick} >final</button>
     </div>
   );
 }

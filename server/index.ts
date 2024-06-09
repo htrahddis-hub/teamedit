@@ -44,15 +44,20 @@ io.on("connection", (socket) => {
   socket.on('disconnect', () => {
     console.log(io.engine.clientsCount + "on disconnect");
     console.log(socket.id);
-  })
+  });
+  socket.on('check', () => {
+    console.log(io.engine.clientsCount + "no of sockets");
+    console.log(socket.id);
+  });
 
-  socket.on("message", (data) => {
-    operationHandler(data);
-  })
+
+  
+    operationHandler(socket);
+  
 
   socket.on("join room", (data) => {
     socket.join(data.room);
-  })
+  });
 
 
 
@@ -60,7 +65,7 @@ io.on("connection", (socket) => {
     console.log(data.user);
     console.log(data.fileName);
     createFileSocket(data.fileName, data.user).then((data) => console.log(data));
-  })
+  });
 
 });
 

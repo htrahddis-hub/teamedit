@@ -4,6 +4,7 @@ import { Manager } from "socket.io-client";
 import Editor from "../components/editor";
 import { useAppSelector } from "../store";
 import { getUser } from "../reducers/user";
+import EditorSocket from "../components/editorSocket";
 
 
 export default function EditorHome() {
@@ -14,6 +15,8 @@ export default function EditorHome() {
     query: { 'myusername_key': user.email },
   });
   const socket = manager.socket("/");
+
+
 
   React.useEffect(() => {
     socket.connect();
@@ -27,22 +30,21 @@ export default function EditorHome() {
 
 
   const message = (delta: Delta) => {
-    socket.emit('message', { ...delta, user: user.email, filename: filename });
-    console.log('it fired');
-
-
+    socket.emit('message', { delta, user: user.email, filename: filename });
+    // console.log('it fired');
   }
 
   const createFile = (name: string) => {
-    console.log("here");
+    // console.log("here");
     socket.emit('createFile', { fileName: name, user: user.email });
   }
 
 
   const handleClick = () => {
-    socket.emit('message', { i: 'did' })
+    socket.emit('check', { i: 'did' })
 
   };
+
 
   const handleChange = () => {
     setFileLoaded((prev) => {
@@ -54,7 +56,7 @@ export default function EditorHome() {
   return (
     <div style={{ marginLeft: '10px' }}>
       <h1>Editor team</h1>
-      <Editor user={user.email} message={message} />
+      <EditorSocket user={user.email} socket={socket} filename={filename} />
       <button onClick={handleClick}>message</button>
     </div>
   );
