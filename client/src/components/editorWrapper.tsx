@@ -16,12 +16,12 @@ export interface IOps {
 export interface IProps {
   user: string,
   message: Function,
-  ops: Delta | undefined
+  ops: Delta
 }
 
 export default function EditorWrapper({ user, message, ops }: IProps) {
 
-  const [deltaArraySent, setDeltaArraySent] = React.useState<Delta[] | undefined>([]);
+  const [deltaArraySent, setDeltaArraySent] = React.useState<Delta[]>([new Delta()]);
   const [value, setValue] = React.useState<Delta | undefined>();
 
 
@@ -42,7 +42,7 @@ export default function EditorWrapper({ user, message, ops }: IProps) {
   }, [ops]);
   return (
     <div>
-      <Editor user={user} message={message} value={value} setDeltaArraySent={setDeltaArraySent} />
+      <Editor user={user} message={message} value={ops} setDeltaArraySent={setDeltaArraySent} />
     </div>
   );
 }

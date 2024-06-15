@@ -53,6 +53,7 @@
     ]
   },
   "devDependencies": {
-    "@types/axios": "^0.14.0"
+    "@types/axios": "^0.14.0",
+    "@types/lodash": "^4.17.5"
   }
 }

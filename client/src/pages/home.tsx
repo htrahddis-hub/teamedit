@@ -1,17 +1,16 @@
 import React from "react";
-import Editor from "../components/editor";
 import { useAppSelector, useAppDispatch } from "../store";
 import { getUser } from "../reducers/user";
 import { getFiles } from "../reducers/file";
 import { fetch } from "../actions/file";
 import { Delta } from "quill/core";
-import { Manager } from "socket.io-client";
-import File from "../components/file";
 import FileList from "../components/fileList";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
 
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     // socket.connect();
@@ -46,6 +45,7 @@ export default function Home() {
 
 
   const handleClick = () => {
+    navigate('/editor');
     console.log(files);
   };
 
@@ -68,7 +68,7 @@ export default function Home() {
       <File createFile={createFile} /> */}
       <button onClick={handleClick}>get File</button>
       {/* {!fileLoaded || */}
-         {/* <Editor user={user.email} message={message} />} */}
+      {/* <Editor user={user.email} message={message} />} */}
     </div>
   );
 }

@@ -16,13 +16,13 @@ export interface IOps {
 export interface IProps {
   user: string,
   message: Function,
-  value: Delta | undefined,
-  setDeltaArraySent: React.Dispatch<React.SetStateAction<Delta[] | undefined>>
+  value: Delta ,
+  setDeltaArraySent: React.Dispatch<React.SetStateAction<Delta[]>>
 }
 
 export default function Editor({ user, message, value, setDeltaArraySent }: IProps) {
 
-  const [deltaArray, setDeltaArray] = React.useState<Delta[] | undefined>([]);
+  const [deltaArray, setDeltaArray] = React.useState<Delta[] >([]);
 
   const MINUTE_MS = 1000;
   const sentMessage = () => {
@@ -33,7 +33,7 @@ export default function Editor({ user, message, value, setDeltaArraySent }: IPro
       message(sumWithInitial);
       if (sumWithInitial) {
         setDeltaArraySent(prev => {
-          prev?.push(sumWithInitial)
+          prev.push(sumWithInitial)
           return prev
         });
       }

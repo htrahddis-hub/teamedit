@@ -15,7 +15,7 @@ export default function EditorHome() {
     query: { 'myusername_key': user.email },
   });
   const socket = manager.socket("/");
-
+  const [ops, setOps] = React.useState<Delta>();
 
 
   React.useEffect(() => {
@@ -23,7 +23,9 @@ export default function EditorHome() {
     return () => {
       socket.disconnect();
     }
-  }, [socket]);
+  }, []);
+
+  const sendop={}
 
   const [fileLoaded, setFileLoaded] = React.useState<boolean>(false);
   const [filename, setFilename] = React.useState<string>('test');
@@ -45,6 +47,14 @@ export default function EditorHome() {
 
   };
 
+  const handleClick1=()=>{
+    socket.disconnect();
+  }
+
+  const handleClick2=()=>{
+    socket.connect();
+  }
+
 
   const handleChange = () => {
     setFileLoaded((prev) => {
@@ -58,6 +68,8 @@ export default function EditorHome() {
       <h1>Editor team</h1>
       <EditorSocket user={user.email} socket={socket} filename={filename} />
       <button onClick={handleClick}>message</button>
+      <button onClick={handleClick1}>disconnect</button>
+      <button onClick={handleClick2}>connect</button>
     </div>
   );
 }

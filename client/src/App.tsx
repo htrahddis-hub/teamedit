@@ -1,10 +1,9 @@
-import React, { Suspense } from "react";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import React from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import SignUp from "./pages/signup";
 import Login from "./pages/login";
 import Home from "./pages/home";
 import EditorHome from "./pages/editorHome";
-import SimpleBackdrop from "./components/Loader";
 import { useAppDispatch, useAppSelector } from "./store";
 import { authorize } from "./actions/user";
 import { getUser } from "./reducers/user";
@@ -51,7 +50,7 @@ function App() {
           />
           <Route
             path="/editor"
-            element={<EditorHome /> }
+            element={<EditorHome />}
           />
         </Routes>
       </BrowserRouter>

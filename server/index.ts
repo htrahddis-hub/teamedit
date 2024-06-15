@@ -50,10 +50,7 @@ io.on("connection", (socket) => {
     console.log(socket.id);
   });
 
-
-  
     operationHandler(socket);
-  
 
   socket.on("join room", (data) => {
     socket.join(data.room);
