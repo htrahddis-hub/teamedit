@@ -43,7 +43,6 @@ export default function Login({ user1 }: IProps) {
   const [validEmail, setValidEmail] = React.useState<boolean>(true);
   const [validPassword, setValidPassword] = React.useState<boolean>(true);
   const dispatch = useAppDispatch();
-  console.log(user1);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;

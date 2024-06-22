@@ -17,7 +17,6 @@ export const fetch = createAsyncThunk("file/fetch", async (): Promise<IResponse>
     let token = decodeURIComponent(document.cookie);
     const token1 = token.substring(6);
     const { data } = await axios.get(url + "fetchfiles", { headers: { 'authorization': `Bearer ${token1}` } });
-    console.log(data.message);
     
     if (data.message === "successful")
       return { isFetched: true, message: "successfil", data: data.files };

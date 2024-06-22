@@ -46,7 +46,6 @@ export default function Home() {
 
   const handleClick = () => {
     navigate('/editor');
-    console.log(files);
   };
 
   const handleChange = () => {

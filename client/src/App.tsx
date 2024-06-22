@@ -20,7 +20,6 @@ function App() {
     const fetchData = async () => {
       try {
         dispatch(authorize());
-        console.log(user);
 
       } catch (err) {
         console.log(err);

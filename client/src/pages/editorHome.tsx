@@ -1,7 +1,6 @@
 import React from "react";
 import { Delta } from "quill/core";
 import { Manager } from "socket.io-client";
-import Editor from "../components/editor";
 import { useAppSelector } from "../store";
 import { getUser } from "../reducers/user";
 import EditorSocket from "../components/editorSocket";
@@ -29,12 +28,6 @@ export default function EditorHome() {
 
   const [fileLoaded, setFileLoaded] = React.useState<boolean>(false);
   const [filename, setFilename] = React.useState<string>('test');
-
-
-  const message = (delta: Delta) => {
-    socket.emit('message', { delta, user: user.email, filename: filename });
-    // console.log('it fired');
-  }
 
   const createFile = (name: string) => {
     // console.log("here");
