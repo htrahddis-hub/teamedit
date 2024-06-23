@@ -8,20 +8,25 @@ interface EditorProps {
   defaultValue?: any;  // Adjust the type of defaultValue based on the content Quill expects
   onTextChange?: (delta: any, oldDelta: any, source: any) => void;
   onSelectionChange?: (range: any, oldRange: any, source: any) => void;
-  delta: Delta | null;
+  otherDelta: Delta | null;
   setDeltaArray: React.Dispatch<React.SetStateAction<Delta[]>>
+  setOtherDelta: (delta: Delta) => void
 }
 
 const QuillEditor = forwardRef<Quill | null, EditorProps>(
-  ({ readOnly, defaultValue, onTextChange, onSelectionChange, delta, setDeltaArray }, ref) => {
+  ({ readOnly, defaultValue, onTextChange, onSelectionChange, otherDelta, setDeltaArray, setOtherDelta }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const defaultValueRef = useRef(defaultValue);
     const onTextChangeRef = useRef(onTextChange);
     const onSelectionChangeRef = useRef(onSelectionChange);
-
+    const setDeltaArrayRef = useRef(setDeltaArray);
+    const setOtherDeltaRef = useRef(setOtherDelta);
     useLayoutEffect(() => {
       onTextChangeRef.current = onTextChange;
       onSelectionChangeRef.current = onSelectionChange;
+      setDeltaArrayRef.current = setDeltaArray;
+      defaultValueRef.current = defaultValue;
+      setOtherDeltaRef.current = setOtherDelta;
     });
 
     useEffect(() => {
@@ -52,19 +57,22 @@ const QuillEditor = forwardRef<Quill | null, EditorProps>(
       quill.on('text-change', (delta, oldDelta, source) => {
         onTextChangeRef.current?.(delta, oldDelta, source);
         if (source === 'user') {
-          setDeltaArray(prev => {
+          
+          setDeltaArrayRef.current?.(prev => {
             return [...prev, delta];
           });
         }
-        
+        else {
+          setOtherDeltaRef.current?.(delta);
+        }
       });
 
       quill.on('selection-change', (...args) => {
         onSelectionChangeRef.current?.(...args);
       });
 
-      if (delta) {
-        quill.updateContents(delta);
+      if (otherDelta) {
+        quill.updateContents(otherDelta);
       }
 
       return () => {
@@ -73,7 +81,7 @@ const QuillEditor = forwardRef<Quill | null, EditorProps>(
         }
         container.innerHTML = '';
       };
-    }, [ref, delta]);
+    }, [ref, otherDelta]);
 
     return <div ref={containerRef}></div>;
   },

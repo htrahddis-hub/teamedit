@@ -24,34 +24,39 @@ const MINUTE_MS = 1000;
 
 export default function EditorSocket({ user, socket, filename }: IProps) {
 
-  const [deltaArraySent, setDeltaArraySent] = React.useState<Delta[]>([new Delta()]);
   const [deltaArray, setDeltaArray] = React.useState<Delta[]>([]);
-  const [otherDelta,setOtherDelta] = React.useState<Delta[]>([]);
-  const [value, setValue] = React.useState<Delta>(new Delta());
+  const [combineOthersDelta, setCombineOthersDelta] = React.useState<Delta[]>([]);
+  const [otherDelta, setOtherDelta] = React.useState<Delta>(new Delta());
   const [range, setRange] = React.useState<RangeStatic | null>(null);
   const [lastChange, setLastChange] = React.useState<Delta | null>(null);
   const [defaultValue, setDefaultValue] = React.useState<Delta>(new Delta());
   const quillRef = React.useRef<Quill | null>(null);
+  // const defaultValue = React.useRef<Delta>(new Delta());
 
   const sentMessage = () => {
     const delta = new Delta();
     const sumWithInitial: Delta = deltaArray?.reduce((delta, curr) => delta.compose(curr), delta);
     socket.emit('message', { delta: sumWithInitial, user: user, filename: filename });
-
-    setDeltaArraySent(prev => {
-      return [...prev, sumWithInitial]
-    });
-    const sumWithInitial1: Delta = deltaArraySent?.reduce((delta, curr) => delta.compose(curr), delta);
+    console.log(JSON.stringify(sumWithInitial.ops));
     setDeltaArray([]);
-    setDefaultValue(sumWithInitial1);
-    console.log(sumWithInitial);
-    console.log(sumWithInitial1);
-    
+    setDefaultValue(prev => {
+      return prev.compose(sumWithInitial);
+    });
+  }
+
+  const handleOtherChanges = (delta: Delta) => {
+    setDefaultValue(prev => {
+      return prev.compose(delta);
+    });
+    console.log(JSON.stringify(delta.ops));
   }
 
   React.useEffect(() => {
-    socket.on('fwd', (data: { delta: React.SetStateAction<Delta> }) => {
-      setValue(data.delta);
+    socket.on('fwd', (data) => {
+      setOtherDelta(() => {
+        console.log(JSON.stringify(data.delta.ops));
+        return data.delta;
+      });
     });
     return () => {
       socket.off('fwd');
@@ -60,8 +65,7 @@ export default function EditorSocket({ user, socket, filename }: IProps) {
 
   React.useEffect(() => {
     if (deltaArray.length > 0)
-
-      sentMessage()
+      sentMessage();
   }, [deltaArray.length]);
 
 
@@ -73,8 +77,9 @@ export default function EditorSocket({ user, socket, filename }: IProps) {
         defaultValue={defaultValue}
         onSelectionChange={setRange}
         onTextChange={setLastChange}
-        delta={value}
+        otherDelta={otherDelta}
         setDeltaArray={setDeltaArray}
+        setOtherDelta={handleOtherChanges}
       />
     </div>
   );
