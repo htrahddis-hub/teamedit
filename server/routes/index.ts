@@ -1,6 +1,6 @@
 import express, { Router } from "express";
 import { signup, login, verify, createRoom, verifymiddleware } from "../controller/auth";
-import { fetchFiles } from "../controller/file";
+import { fetchFiles, saveFile, createFileSocket } from "../controller/file";
 
 const router: Router = express.Router();
 
@@ -26,6 +26,16 @@ router.get('/room/:name', async function (req, res, next) {
 
 router.get('/fetchfiles', verifymiddleware, async function (req, res, next) {
     const message: string = await fetchFiles(req.body.data.email);
+    res.send(message);
+});
+
+router.post('/savefile', verifymiddleware, async function (req, res, next) {
+    const message: string = await saveFile(req.body.content, req.body.fileId);
+    res.send(message);
+});
+
+router.post('/createfile', verifymiddleware, async function (req, res, next) {
+    const message: string = await createFileSocket(req.body.fileName, req.body.data.id);
     res.send(message);
 });
 

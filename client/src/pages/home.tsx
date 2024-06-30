@@ -2,7 +2,7 @@ import React from "react";
 import { useAppSelector, useAppDispatch } from "../store";
 import { getUser } from "../reducers/user";
 import { getFiles } from "../reducers/file";
-import { fetch } from "../actions/file";
+import { fetch, create } from "../actions/file";
 import { Delta } from "quill/core";
 import FileList from "../components/fileList";
 import { useNavigate } from "react-router-dom";
@@ -54,20 +54,22 @@ export default function Home() {
     })
   };
 
+  const handleChangeI = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilename(event.target.value);
+  };
+
+  const handleClickFile = () => {
+    dispatch(create(filename));
+  }
 
   return (
     <div style={{ marginLeft: '10px' }}>
       <h1>Editor team</h1>
-
       {fileLoaded || <FileList data={files.data} />}
-      <button onClick={handleChange}>filechange</button>
-      {/* <p>enter the file to open</p>
-      <input value={filename} onChange={handleChange} required />
-      <button onClick={handleClick}>Open File</button>
-      <File createFile={createFile} /> */}
-      <button onClick={handleClick}>get File</button>
-      {/* {!fileLoaded || */}
-      {/* <Editor user={user.email} message={message} />} */}
+      <button onClick={handleClick}>Open Editor</button>
+      <br />
+      <input type="text" value={filename} onChange={handleChangeI} />{" "}
+      <button onClick={handleClickFile}>createFile</button>
     </div>
   );
 }

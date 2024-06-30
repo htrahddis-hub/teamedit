@@ -13,12 +13,6 @@ export function operationHandler(socket: Socket) {
   socket.on('message', (data) => {
     console.log(data.delta);
     console.log(data);
-
     socket.broadcast.emit('fwd', data);
   });
-
-  // socket.emit('fwd',)
-
-  // ops.push(data.delta);
-
 }

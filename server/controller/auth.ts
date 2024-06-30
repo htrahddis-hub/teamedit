@@ -59,11 +59,11 @@ export const verifymiddleware: RequestHandler = async (req, res, next) => {
           id: decoded.User_Id,
         },
       });
-      console.log(User?.token);
-      console.log(token.substring(7));
+      // console.log(User?.token);
+      // console.log(token.substring(7));
 
       if (User?.token === token.substring(7)) {
-        req.body.data = { email: User.email }
+        req.body.data = { email: User.email, id: User.id }
         next();
       }
       else

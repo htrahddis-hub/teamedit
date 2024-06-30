@@ -37,7 +37,7 @@ export default function EditorSocket({ user, socket, filename }: IProps) {
     const delta = new Delta();
     const sumWithInitial: Delta = deltaArray?.reduce((delta, curr) => delta.compose(curr), delta);
     socket.emit('message', { delta: sumWithInitial, user: user, filename: filename });
-    console.log(JSON.stringify(sumWithInitial.ops));
+    // console.log(JSON.stringify(sumWithInitial.ops));
     setDeltaArray([]);
     setDefaultValue(prev => {
       return prev.compose(sumWithInitial);
@@ -48,13 +48,13 @@ export default function EditorSocket({ user, socket, filename }: IProps) {
     setDefaultValue(prev => {
       return prev.compose(delta);
     });
-    console.log(JSON.stringify(delta.ops));
+    // console.log(JSON.stringify(delta.ops));
   }
 
   React.useEffect(() => {
     socket.on('fwd', (data) => {
       setOtherDelta(() => {
-        console.log(JSON.stringify(data.delta.ops));
+        // console.log(JSON.stringify(data.delta.ops));
         return data.delta;
       });
     });
