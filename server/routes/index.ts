@@ -1,6 +1,6 @@
 import express, { Router } from "express";
 import { signup, login, verify, createRoom, verifymiddleware } from "../controller/auth";
-import { fetchFiles, saveFile, createFileSocket } from "../controller/file";
+import { fetchFiles, saveFile, createFileSocket, deleteFile, renameFile, shareFile, fetchFileById } from "../controller/file";
 
 const router: Router = express.Router();
 
@@ -36,6 +36,26 @@ router.post('/savefile', verifymiddleware, async function (req, res, next) {
 
 router.post('/createfile', verifymiddleware, async function (req, res, next) {
     const message: string = await createFileSocket(req.body.fileName, req.body.data.id);
+    res.send(message);
+});
+
+router.post('/deletefile', verifymiddleware, async function (req, res, next) {
+    const message: string = await deleteFile(req.body.data.id);
+    res.send(message);
+});
+
+router.post('/renamefile', verifymiddleware, async function (req, res, next) {
+    const message: string = await renameFile(req.body.data.name, req.body.data.id);
+    res.send(message);
+});
+
+router.post('/sharefile', verifymiddleware, async function (req, res, next) {
+    const message: string = await shareFile(req.body.userId, req.body.fileId);
+    res.send(message);
+});
+
+router.get('/fetchfilebyid', verifymiddleware, async function (req, res, next) {
+    const message: string = await fetchFileById(req.body.data.id, req.body.fileId);
     res.send(message);
 });
 
