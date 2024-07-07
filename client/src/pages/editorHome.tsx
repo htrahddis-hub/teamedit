@@ -9,7 +9,7 @@ import EditorSocket from "../components/editorSocket";
 export default function EditorHome() {
 
   const user = useAppSelector(getUser);
-  const manager = new Manager("http://localhost:3000", {
+  const manager = new Manager("https://teamedit.onrender.com", {
     autoConnect: false,
     query: { 'myusername_key': user.email },
   });

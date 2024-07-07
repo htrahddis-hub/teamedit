@@ -2,8 +2,8 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Interface } from "readline";
 import { IAuthenication } from "../reducers/user";
-// const url = "https://ecommsidd.onrender.com/auth/";
-const url = "http://localhost:3000/auth/";
+const url = "https://teamedit.onrender.com/auth/";
+// const url = "http://localhost:3000/auth/";
 
 export interface IUser {
   email: string;

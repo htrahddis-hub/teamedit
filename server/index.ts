@@ -19,11 +19,11 @@ const PORT = process.env.PORT || 3000;
 
 export const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:3001"
+    origin: "https://teamedit.netlify.app"
   }
 });
 
-app.use(cors<CorsRequest>({ origin: 'http://localhost:3001', credentials: true }));
+app.use(cors<CorsRequest>({ origin: 'https://teamedit.netlify.app', credentials: true }));
 app.use(bodyParser.json({ limit: "30mb" }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 
