@@ -1,0 +1,10 @@
+.hover:hover {
+  border: 1px solid;
+  border-color: #679fff;
+  box-shadow: inset;
+}
+
+.hover {
+  border-radius: 0 !important;
+}
+

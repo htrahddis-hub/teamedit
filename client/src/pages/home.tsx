@@ -1,13 +1,19 @@
-import React from "react";
+import React from 'react';
+import Box from '@mui/material/Box';
 import { useAppSelector, useAppDispatch } from "../store";
 import { getUser } from "../reducers/user";
 import { getFiles } from "../reducers/file";
 import { fetch, create } from "../actions/file";
-import { Delta } from "quill/core";
 import FileList from "../components/fileList";
 import { useNavigate } from "react-router-dom";
+import { NavbarMain } from '../components/partials/NavbarMain';
+import { Container, Typography } from '@mui/material';
+import Card from '@mui/material/Card';
+import CardMedia from '@mui/material/CardMedia';
+import './home.css';
 
-export default function Home() {
+
+export default function PrimarySearchAppBar() {
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -26,32 +32,8 @@ export default function Home() {
   const [fileLoaded, setFileLoaded] = React.useState<boolean>(false);
   const [filename, setFilename] = React.useState<string>('');
 
-  // const manager = new Manager("http://localhost:3000", {
-  //   autoConnect: false,
-  //   query: { 'myusername_key': user.email },
-  // });
-  // const socket = manager.socket("/");
-
-
-
-  const message = (delta: Delta) => {
-    // socket.emit('message', { ...delta, user: user.email });
-  }
-
-  const createFile = (name: string) => {
-    console.log("here");
-    // socket.emit('createFile', { fileName: name, user: user.email });
-  }
-
-
   const handleClick = () => {
     navigate('/editor');
-  };
-
-  const handleChange = () => {
-    setFileLoaded((prev) => {
-      return !prev;
-    })
   };
 
   const handleChangeI = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,15 +43,48 @@ export default function Home() {
   const handleClickFile = () => {
     dispatch(create(filename));
   }
-
   return (
-    <div style={{ marginLeft: '10px' }}>
-      <h1>Editor team</h1>
-      {fileLoaded || <FileList data={files.data} />}
-      <button onClick={handleClick}>Open Editor</button>
-      <br />
-      <input type="text" value={filename} onChange={handleChangeI} />{" "}
-      <button onClick={handleClickFile}>createFile</button>
-    </div>
+    <Box sx={{ flexGrow: 1 }}>
+      <NavbarMain />
+      <Container maxWidth="lg" sx={{ pt: 4 }}>
+        <Typography variant='h5'>
+          Start a new document
+        </Typography>
+        <br />
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+        }}>
+          <Box sx={{ width: 150, mr:4 }}>
+            <Card className='hover'>
+              <CardMedia
+                component="img"
+                height="200"
+                className='hoverimg'
+              />
+            </Card>
+            <Typography variant='body1' sx={{ mt: 2 }}>
+              Blank Document
+            </Typography>
+          </Box>
+          <Box sx={{ width: 150 }}>
+            <Card className='hover'>
+              <CardMedia
+                component="img"
+                height="200"
+              />
+            </Card>
+            <Typography variant='body1' sx={{ mt: 2 }}>
+              Blank Document
+            </Typography>
+          </Box>
+        </Box>
+        {fileLoaded || <FileList data={files.data} />}
+        <button onClick={handleClick}>Open Editor</button>
+        <br />
+        <input type="text" value={filename} onChange={handleChangeI} />{" "}
+        <button onClick={handleClickFile}>createFile</button>
+      </Container>
+    </Box>
   );
 }
