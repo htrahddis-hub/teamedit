@@ -5,9 +5,9 @@ import {
   authorize,
   logout,
 } from "../actions/user";
-import { IUser } from "../pages/login";
 import type { ActionReducerMapBuilder } from '@reduxjs/toolkit'
 import { RootState } from "../store";
+
 
 
 export interface IAuthenication {

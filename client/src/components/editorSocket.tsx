@@ -1,8 +1,7 @@
 import Quill, { Delta } from 'quill/core';
 import * as React from 'react';
-import 'react-quill/dist/quill.snow.css';
+import 'quill/dist/quill.snow.css';
 import { Socket } from 'socket.io-client';
-import _ from "lodash";
 import RangeStatic from 'quill';
 import QuillEditor from './QuillEditor';
 
@@ -19,8 +18,6 @@ export interface IProps {
   filename: string,
   socket: Socket
 }
-
-const MINUTE_MS = 1000;
 
 export default function EditorSocket({ user, socket, filename }: IProps) {
 

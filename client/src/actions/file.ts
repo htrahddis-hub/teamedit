@@ -1,9 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { Interface } from "readline";
 import { IFile } from "../reducers/file";
 
-const url = process.env.REACT_APP_URL;
+
+const url = import.meta.env.VITE_URL;
 
 
 export interface IResponse {
