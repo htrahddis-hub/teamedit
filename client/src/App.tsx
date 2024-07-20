@@ -37,7 +37,7 @@ function App() {
           <Route
             path="/"
             element={user.auth ?
-              <Home /> : <Login user1={user} />}
+              <Home /> : <Login />}
           />
           <Route
             path="/signup"
@@ -45,7 +45,7 @@ function App() {
           />
           <Route
             path="/login"
-            element={<Login user1={user} />}
+            element={<Login />}
           />
           <Route
             path="/editor"
