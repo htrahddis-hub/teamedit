@@ -42,7 +42,7 @@ export const login = createAsyncThunk("user/login", async (user: IUser): Promise
       const token = data.token;
       const d = new Date();
       d.setTime(d.getTime() + 20 * 24 * 60 * 60 * 1000);
-      let expires = "expires=" + d.toUTCString();
+      const expires = "expires=" + d.toUTCString();
       document.cookie = `token=${token}; ${expires}; path=/;`;
       return { isSignedin: false, email: user.email, message: "Successsful", auth: true };
     }
@@ -56,7 +56,7 @@ export const login = createAsyncThunk("user/login", async (user: IUser): Promise
 
 export const authorize = createAsyncThunk("user/authorize", async () => {
   try {
-    let token = decodeURIComponent(document.cookie);
+    const token = decodeURIComponent(document.cookie);
     const token1 = token.substring(6);
     const { data } = await axios.post(url + "verify", {}, { headers: { 'authorization': `Bearer ${token1}` } });
   

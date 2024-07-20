@@ -1,7 +1,6 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import { useAppSelector, useAppDispatch } from "../store";
-import { getUser } from "../reducers/user";
 import { getFiles } from "../reducers/file";
 import { fetch, create } from "../actions/file";
 import FileList from "../components/fileList";
@@ -26,10 +25,8 @@ export default function PrimarySearchAppBar() {
     }
   }, []);
 
-  const user = useAppSelector(getUser);
   const files = useAppSelector(getFiles);
 
-  const [fileLoaded, setFileLoaded] = React.useState<boolean>(false);
   const [filename, setFilename] = React.useState<string>('');
 
   const handleClick = () => {
@@ -79,7 +76,7 @@ export default function PrimarySearchAppBar() {
             </Typography>
           </Box>
         </Box>
-        {fileLoaded || <FileList data={files.data} />}
+        <FileList data={files.data} />
         <button onClick={handleClick}>Open Editor</button>
         <br />
         <input type="text" value={filename} onChange={handleChangeI} />{" "}

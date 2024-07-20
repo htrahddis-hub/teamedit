@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { validateEmail, validatePassword, validateName } from '../util';
-import { useAppDispatch, useAppSelector } from '../store';
+import { useAppDispatch } from '../store';
 import { signup } from '../actions/user';
 
 
@@ -31,9 +31,9 @@ interface IUserCheck {
   Lname: boolean;
 }
 
-function Copyright(props: any) {
+function Copyright() {
   return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
+    <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 5 }}>
       {'Copyright © '}
       <Link color="inherit" href="https://mui.com/">
         Your Website
@@ -214,7 +214,7 @@ export default function SignUp() {
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
+        <Copyright />
       </Container>
     </ThemeProvider>
   );

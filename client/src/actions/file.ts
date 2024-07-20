@@ -15,7 +15,7 @@ export interface IResponse {
 
 export const fetch = createAsyncThunk("file/fetch", async (): Promise<IResponse> => {
   try {
-    let token = decodeURIComponent(document.cookie);
+    const token = decodeURIComponent(document.cookie);
     const token1 = token.substring(6);
     const { data } = await axios.get(url + "fetchfiles", { headers: { 'authorization': `Bearer ${token1}` } });
 
@@ -35,7 +35,7 @@ export const fetch = createAsyncThunk("file/fetch", async (): Promise<IResponse>
 
 export const create = createAsyncThunk("file/create", async (fileName: string): Promise<IResponse> => {
   try {
-    let token = decodeURIComponent(document.cookie);
+    const token = decodeURIComponent(document.cookie);
     const token1 = token.substring(6);
     const { data } = await axios.post(url + "createfile", { fileName: fileName }, { headers: { 'authorization': `Bearer ${token1}` } });
 

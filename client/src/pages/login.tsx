@@ -15,24 +15,17 @@ import Paper from '@mui/material/Paper';
 import './login.css';
 import { useAppDispatch } from '../store';
 import { login } from '../actions/user';
-import { IAuthenication } from '../reducers/user';
 import { validateEmail, validatePassword } from '../util';
-
-
 
 export interface IUser {
   email: string,
   password: string
 }
 
-export interface IProps {
-  user1: IAuthenication
-}
-
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-export default function Login({ user1 }: IProps) {
+export default function Login() {
 
   const [user, setUser] = React.useState<IUser>({
     email: "",

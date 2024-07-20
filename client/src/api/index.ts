@@ -3,7 +3,7 @@ import { Socket } from "socket.io-client";
 
 const url: string = "http://localhost:3000/socket/";
 
-export async function test(socket: Socket): Promise<string | any> {
+export async function test(socket: Socket): Promise<string> {
 	try {
 
 		socket.emit('join room', { room: "file.txt" });
@@ -11,8 +11,9 @@ export async function test(socket: Socket): Promise<string | any> {
 		return data;
 
 	} catch (error) {
-
+		console.log(error);
+		
 	}
-
+ return "";
 }
 

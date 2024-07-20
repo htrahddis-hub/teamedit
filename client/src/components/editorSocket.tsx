@@ -2,7 +2,6 @@ import Quill, { Delta } from 'quill/core';
 import * as React from 'react';
 import 'quill/dist/quill.snow.css';
 import { Socket } from 'socket.io-client';
-import RangeStatic from 'quill';
 import QuillEditor from './QuillEditor';
 
 
@@ -22,10 +21,7 @@ export interface IProps {
 export default function EditorSocket({ user, socket, filename }: IProps) {
 
   const [deltaArray, setDeltaArray] = React.useState<Delta[]>([]);
-  const [combineOthersDelta, setCombineOthersDelta] = React.useState<Delta[]>([]);
   const [otherDelta, setOtherDelta] = React.useState<Delta>(new Delta());
-  const [range, setRange] = React.useState<RangeStatic | null>(null);
-  const [lastChange, setLastChange] = React.useState<Delta | null>(null);
   const [defaultValue, setDefaultValue] = React.useState<Delta>(new Delta());
   const quillRef = React.useRef<Quill | null>(null);
   // const defaultValue = React.useRef<Delta>(new Delta());
@@ -72,8 +68,6 @@ export default function EditorSocket({ user, socket, filename }: IProps) {
         ref={quillRef}
         readOnly={false}
         defaultValue={defaultValue}
-        onSelectionChange={setRange}
-        onTextChange={setLastChange}
         otherDelta={otherDelta}
         setDeltaArray={setDeltaArray}
         setOtherDelta={handleOtherChanges}

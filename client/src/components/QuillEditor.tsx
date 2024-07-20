@@ -5,25 +5,19 @@ import { Delta } from 'quill/core';
 
 interface EditorProps {
   readOnly: boolean;
-  defaultValue?: any;  // Adjust the type of defaultValue based on the content Quill expects
-  onTextChange?: (delta: any, oldDelta: any, source: any) => void;
-  onSelectionChange?: (range: any, oldRange: any, source: any) => void;
+  defaultValue?: Delta;  // Adjust the type of defaultValue based on the content Quill expects
   otherDelta: Delta | null;
   setDeltaArray: React.Dispatch<React.SetStateAction<Delta[]>>
   setOtherDelta: (delta: Delta) => void
 }
 
 const QuillEditor = forwardRef<Quill | null, EditorProps>(
-  ({ readOnly, defaultValue, onTextChange, onSelectionChange, otherDelta, setDeltaArray, setOtherDelta }, ref) => {
+  ({ readOnly, defaultValue, otherDelta, setDeltaArray, setOtherDelta }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const defaultValueRef = useRef(defaultValue);
-    const onTextChangeRef = useRef(onTextChange);
-    const onSelectionChangeRef = useRef(onSelectionChange);
     const setDeltaArrayRef = useRef(setDeltaArray);
     const setOtherDeltaRef = useRef(setOtherDelta);
     useLayoutEffect(() => {
-      onTextChangeRef.current = onTextChange;
-      onSelectionChangeRef.current = onSelectionChange;
       setDeltaArrayRef.current = setDeltaArray;
       defaultValueRef.current = defaultValue;
       setOtherDeltaRef.current = setOtherDelta;
@@ -54,8 +48,8 @@ const QuillEditor = forwardRef<Quill | null, EditorProps>(
         quill.setContents(defaultValueRef.current);
       }
 
-      quill.on('text-change', (delta, oldDelta, source) => {
-        onTextChangeRef.current?.(delta, oldDelta, source);
+      quill.on('text-change', (delta, _oldDelta, source) => {
+
         if (source === 'user') {
           
           setDeltaArrayRef.current?.(prev => {
@@ -65,10 +59,6 @@ const QuillEditor = forwardRef<Quill | null, EditorProps>(
         else {
           setOtherDeltaRef.current?.(delta);
         }
-      });
-
-      quill.on('selection-change', (...args) => {
-        onSelectionChangeRef.current?.(...args);
       });
 
       if (otherDelta) {
