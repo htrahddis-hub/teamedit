@@ -16,6 +16,7 @@ import './login.css';
 import { useAppDispatch } from '../store';
 import { login } from '../actions/user';
 import { validateEmail, validatePassword } from '../util';
+import { useNavigate } from 'react-router-dom';
 
 export interface IUser {
   email: string,
@@ -36,6 +37,7 @@ export default function Login() {
   const [validEmail, setValidEmail] = React.useState<boolean>(true);
   const [validPassword, setValidPassword] = React.useState<boolean>(true);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -56,6 +58,7 @@ export default function Login() {
     if (validEmail && validPassword) {
       dispatch(login(user));
     }
+    navigate('/');
   };
 
   return (
@@ -176,7 +179,7 @@ export default function Login() {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="#" variant="body2">
+                  <Link href="/signup" variant="body2">
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>

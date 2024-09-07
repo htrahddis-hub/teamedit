@@ -3,6 +3,8 @@ import { Manager } from "socket.io-client";
 import { useAppSelector } from "../store";
 import { getUser } from "../reducers/user";
 import EditorSocket from "../components/editorSocket";
+import { Container, Grid } from "@mui/material";
+import { NavbarMain } from "../components/partials/NavbarMain";
 
 const url = import.meta.env.VITE_URL;
 
@@ -21,7 +23,7 @@ export default function EditorHome() {
     return () => {
       socket.disconnect();
     }
-  }, []);
+  });
 
   // const sendop = {}
 
@@ -34,18 +36,18 @@ export default function EditorHome() {
   // }
 
 
-  const handleClick = () => {
-    socket.emit('check', { i: 'did' })
+  // const handleClick = () => {
+  //   socket.emit('check', { i: 'did' })
 
-  };
+  // };
 
-  const handleClick1 = () => {
-    socket.disconnect();
-  }
+  // const handleClick1 = () => {
+  //   socket.disconnect();
+  // }
 
-  const handleClick2 = () => {
-    socket.connect();
-  }
+  // const handleClick2 = () => {
+  //   socket.connect();
+  // }
 
 
   // const handleChange = () => {
@@ -56,12 +58,18 @@ export default function EditorHome() {
 
 
   return (
-    <div style={{ marginLeft: '10px' }}>
-      <h1>Editor team</h1>
-      <EditorSocket user={user.email} socket={socket} filename={'filename'} />
-      <button onClick={handleClick}>message</button>
-      <button onClick={handleClick1}>disconnect</button>
-      <button onClick={handleClick2}>connect</button>
-    </div>
+    <Grid sx={{height:'calc(100vh - 64px)',backgroundColor: '#e9e9e9'}}>
+      <NavbarMain />
+      <Container maxWidth="xl" sx={{ paddingTop:'40px',backgroundColor:'inherit',  minHeight:'100%', scrollbarGutter: 'stable both-edges' }}>
+        <EditorSocket user={user.email} socket={socket} filename={'filename'} />
+      </Container>
+    </Grid>
+    // <div style={{ marginLeft: '10px' }}>
+    //   <h1>Editor team</h1>
+    //   
+    //   <button onClick={handleClick}>message</button>
+    //   <button onClick={handleClick1}>disconnect</button>
+    //   <button onClick={handleClick2}>connect</button>
+    // </div>
   );
 }

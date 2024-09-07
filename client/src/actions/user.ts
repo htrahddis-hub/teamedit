@@ -60,18 +60,14 @@ export const authorize = createAsyncThunk("user/authorize", async () => {
     const token1 = token.substring(6);
     const { data } = await axios.post(url + "verify", {}, { headers: { 'authorization': `Bearer ${token1}` } });
   
-
     if (data.message === "successful") {
-
       return { isSignedin: false, email: data.email, message: "Successful", auth: true };
     }
-
     else {
       return { isSignedin: false, email: "", message: "Failure", auth: false };
     }
 
   } catch (err) {
-
     return { isSignedin: false, email: "", message: "Failure", auth: false };
   }
 });

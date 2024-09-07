@@ -11,6 +11,30 @@ interface EditorProps {
   setOtherDelta: (delta: Delta) => void
 }
 
+const toolbarOptions = [
+  [{ 'font': [] }],
+  [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+  // [{ 'size': ['small', false, 'large', 'huge',''] }], 
+  ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+  // ['blockquote', 'code-block'],
+  // ['link', 'image', 'video', 'formula'],
+
+  // [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+  // [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],
+  // [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+  // [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+  // [{ 'direction': 'rtl' }],                         // text direction
+
+ // custom dropdown
+  // [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+
+  [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+  
+  [{ 'align': [] }],
+
+  // ['clean']                                         // remove formatting button
+];
+
 const QuillEditor = forwardRef<Quill | null, EditorProps>(
   ({ readOnly, defaultValue, otherDelta, setDeltaArray, setOtherDelta }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -38,6 +62,7 @@ const QuillEditor = forwardRef<Quill | null, EditorProps>(
       );
       const quill = new Quill(editorContainer, {
         theme: 'snow',
+        modules: { toolbar: toolbarOptions }
       });
 
       if (ref && 'current' in ref) {
@@ -73,7 +98,7 @@ const QuillEditor = forwardRef<Quill | null, EditorProps>(
       };
     }, [ref, otherDelta]);
 
-    return <div ref={containerRef}></div>;
+    return <div ref={containerRef} style={{ backgroundColor: 'white', margin: "0 10vw", marginTop: "vh" }}></div>;
   },
 );
 

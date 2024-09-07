@@ -5,7 +5,6 @@ import Typography from '@mui/material/Typography';
 import Badge from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
@@ -14,6 +13,9 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import { Search, SearchIconWrapper, StyledInputBase } from '../../styles/home.style';
+import { useAppDispatch } from '../../store';
+import { logout } from "../../actions/user";
+import { useNavigate } from "react-router-dom";
 
 export const NavbarMain = ()=>{
 
@@ -23,6 +25,8 @@ export const NavbarMain = ()=>{
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const dispatch = useAppDispatch();
+  const navigate =useNavigate();
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -40,6 +44,12 @@ export const NavbarMain = ()=>{
   const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
+
+  const handleLogout=()=>{
+    handleMenuClose();
+    dispatch(logout());
+    navigate('/');
+  }
 
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
@@ -59,7 +69,7 @@ export const NavbarMain = ()=>{
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleLogout}>Logout</MenuItem>
     </Menu>
   );
 
@@ -118,7 +128,7 @@ export const NavbarMain = ()=>{
   return (
     <AppBar position="sticky">
         <Toolbar>
-          <IconButton
+          {/* <IconButton
             size="large"
             edge="start"
             color="inherit"
@@ -126,12 +136,12 @@ export const NavbarMain = ()=>{
             sx={{ mr: 2 }}
           >
             <MenuIcon />
-          </IconButton>
+          </IconButton> */}
           <Typography
             variant="h6"
             noWrap
             component="div"
-            sx={{ display: { xs: 'none', sm: 'block' } }}
+            sx={{ display: { xs: 'none', sm: 'block' } , pl:5}}
           >
             Editor team
           </Typography>

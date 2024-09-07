@@ -63,15 +63,13 @@ export default function EditorSocket({ user, socket, filename }: IProps) {
 
 
   return (
-    <div>
-      <QuillEditor
-        ref={quillRef}
-        readOnly={false}
-        defaultValue={defaultValue}
-        otherDelta={otherDelta}
-        setDeltaArray={setDeltaArray}
-        setOtherDelta={handleOtherChanges}
-      />
-    </div>
+    <QuillEditor
+      ref={quillRef}
+      readOnly={false}
+      defaultValue={defaultValue}
+      otherDelta={otherDelta}
+      setDeltaArray={setDeltaArray}
+      setOtherDelta={handleOtherChanges}
+    />
   );
 }

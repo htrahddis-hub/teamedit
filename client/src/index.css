@@ -11,3 +11,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.ql-container {
+  height: calc(75vh); 
+  scrollbar-gutter: stable both-edges;
+}
