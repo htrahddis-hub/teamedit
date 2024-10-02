@@ -1,13 +1,14 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import SignUp from "./pages/signup";
-import Login from "./pages/login";
-import Home from "./pages/home";
-import EditorHome from "./pages/editorHome";
 import { useAppDispatch, useAppSelector } from "./store";
 import { authorize } from "./actions/user";
 import { getUser } from "./reducers/user";
-import { fetch } from "./actions/fileList";
+import { JSX } from "react/jsx-runtime";
+
+const Login = lazy(() => import('./pages/login'));
+const Home = lazy(() => import('./pages/home'));
+const EditorHome = lazy(() => import('./pages/editorHome'));
+const SignUp = lazy(() => import('./pages/signup'));
 
 
 function App() {
@@ -21,7 +22,6 @@ function App() {
     const fetchData = async () => {
       try {
         dispatch(authorize());
-        dispatch(fetch());
 
       } catch (err) {
         console.log(err);
@@ -31,6 +31,19 @@ function App() {
   }, [dispatch]);
 
 
+  const suspenseWrapper = (WrappedComponent:React.FunctionComponent) => (props: JSX.IntrinsicAttributes) => {
+    return (
+      <Suspense fallback={<div />}>
+        <WrappedComponent  {...props}/>
+      </Suspense>
+    );
+  };
+
+
+  const LoginWithSuspense = suspenseWrapper(Login);
+  const SignupWithSuspense = suspenseWrapper(SignUp);
+  const HomeWithSuspense = suspenseWrapper(Home);
+  const EditorHomeWithSuspense = suspenseWrapper(EditorHome);
 
   return (
     <div className="App">
@@ -39,19 +52,19 @@ function App() {
           <Route
             path="/"
             element={user.auth ?
-              <Home /> : <Login />}
+              <HomeWithSuspense /> : <LoginWithSuspense />}
           />
           <Route
             path="/signup"
-            element={<SignUp />}
+            element={<SignupWithSuspense />}
           />
           <Route
             path="/login"
-            element={<Login />}
+            element={<LoginWithSuspense />}
           />
           <Route
             path="/editor/:id"
-            element={user.auth ? <EditorHome /> : <Login />}
+            element={user.auth ? <EditorHomeWithSuspense /> : <LoginWithSuspense />}
           />
         </Routes>
       </BrowserRouter>

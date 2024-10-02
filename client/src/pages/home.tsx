@@ -2,13 +2,14 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import { useAppSelector, useAppDispatch } from "../store";
 import { getFiles } from "../reducers/fileList";
-import { fetch, create } from "../actions/fileList";
+import { create } from "../actions/fileList";
 import FileList from "../components/fileList";
 import { useNavigate } from "react-router-dom";
 import { NavbarMain } from '../components/partials/NavbarMain';
 import { Container, Typography } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
+import { fetch } from "../actions/fileList";
 import './home.css';
 
 
@@ -17,13 +18,13 @@ export default function PrimarySearchAppBar() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  // React.useEffect(() => {
-  //   // socket.connect();
-  //   dispatch(fetch())
-  //   return () => {
-  //     // socket.disconnect();
-  //   }
-  // }, []);
+  React.useEffect(() => {
+    // socket.connect();
+    dispatch(fetch())
+    return () => {
+      // socket.disconnect();
+    }
+  }, []);
 
   const files = useAppSelector(getFiles);
 

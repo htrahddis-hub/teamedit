@@ -3,11 +3,8 @@ import { Manager } from "socket.io-client";
 import { useAppDispatch, useAppSelector } from "../store";
 import { getUser } from "../reducers/user";
 import EditorSocket from "../components/editorSocket";
-import { Container, Grid } from "@mui/material";
 import { useParams } from "react-router-dom";
-import { getFiles } from "../reducers/fileList";
 import { Navbar } from "../components/partials/Navbar";
-import { IFile } from "../reducers/file";
 import { getFile } from "../reducers/file";
 import { fetchFile } from "../actions/file";
 
@@ -15,16 +12,6 @@ import { fetchFile } from "../actions/file";
 const url = import.meta.env.VITE_URL;
 
 export default function EditorHome() {
-
-  const [file, setFile] = React.useState<IFile>({
-    content: "",
-    name: "",
-    updatedAt: new Date(),
-    createdAt: new Date(),
-    id: 0,
-    author: []
-  });
-
   const user = useAppSelector(getUser);
   const File = useAppSelector(getFile);
   const dispatch = useAppDispatch();
