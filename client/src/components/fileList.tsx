@@ -4,12 +4,20 @@ import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { IFile } from '../constants/types';
+import { useNavigate } from 'react-router-dom';
 
 interface Iprops {
   data: IFile[];
 }
 
 export default function StickyHeadTable({ data }: Iprops) {
+
+  const navigate = useNavigate();
+
+  const handleClick = (e: number) => {
+    navigate(`/editor/${e}`);
+  }
+
 
 
   return (
@@ -34,7 +42,7 @@ export default function StickyHeadTable({ data }: Iprops) {
         {data
           .map((row) => {
             return (
-              <TableRow hover tabIndex={-1} key={row.id}>
+              <TableRow hover tabIndex={-1} key={row.id} onClick={() => handleClick(row.id)} >
                 <TableCell align='left'>
                   {row.name}
                 </TableCell>

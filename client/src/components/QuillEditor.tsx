@@ -2,6 +2,7 @@ import React, { forwardRef, useEffect, useLayoutEffect, useRef } from 'react';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import { Delta } from 'quill/core';
+import '../styles/QuillEditor.css';
 
 interface EditorProps {
   readOnly: boolean;
@@ -98,7 +99,7 @@ const QuillEditor = forwardRef<Quill | null, EditorProps>(
       };
     }, [ref, otherDelta]);
 
-    return <div ref={containerRef} style={{ backgroundColor: 'white', margin: "0 10vw", marginTop: "vh" }}></div>;
+    return <div ref={containerRef} ></div>;
   },
 );
 

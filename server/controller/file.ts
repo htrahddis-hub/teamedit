@@ -153,12 +153,18 @@ export async function fetchFileById(userId: number, fileId: number): Promise<str
         author: {
           where: {
             id: userId
-          }
+          },
+          select: {
+            email: true,
+            id: true,
+            firstname:true,
+            lastname:true
+          },
         }
       }
     });
     if (File?.author[0] && File?.author[0].id===userId) {
-      return JSON.stringify({ user: File, message: "successful" });
+      return JSON.stringify({ value: File, message: "successful" });
     }
     return JSON.stringify({ filename: "", message: "failure" });
   }

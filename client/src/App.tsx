@@ -7,6 +7,7 @@ import EditorHome from "./pages/editorHome";
 import { useAppDispatch, useAppSelector } from "./store";
 import { authorize } from "./actions/user";
 import { getUser } from "./reducers/user";
+import { fetch } from "./actions/fileList";
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
     const fetchData = async () => {
       try {
         dispatch(authorize());
+        dispatch(fetch());
 
       } catch (err) {
         console.log(err);
@@ -48,8 +50,8 @@ function App() {
             element={<Login />}
           />
           <Route
-            path="/editor"
-            element={<EditorHome />}
+            path="/editor/:id"
+            element={user.auth ? <EditorHome /> : <Login />}
           />
         </Routes>
       </BrowserRouter>

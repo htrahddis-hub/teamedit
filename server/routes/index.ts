@@ -54,8 +54,8 @@ router.post('/sharefile', verifymiddleware, async function (req, res, next) {
     res.send(message);
 });
 
-router.get('/fetchfilebyid', verifymiddleware, async function (req, res, next) {
-    const message: string = await fetchFileById(req.body.data.id, req.body.fileId);
+router.get('/fetchfilebyid/:id', verifymiddleware, async function (req, res, next) {
+    const message: string = await fetchFileById(req.body.data.id, parseInt(req.params.id));
     res.send(message);
 });
 

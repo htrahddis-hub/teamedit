@@ -1,29 +1,49 @@
 import React from "react";
 import { Manager } from "socket.io-client";
-import { useAppSelector } from "../store";
+import { useAppDispatch, useAppSelector } from "../store";
 import { getUser } from "../reducers/user";
 import EditorSocket from "../components/editorSocket";
 import { Container, Grid } from "@mui/material";
-import { NavbarMain } from "../components/partials/NavbarMain";
+import { useParams } from "react-router-dom";
+import { getFiles } from "../reducers/fileList";
+import { Navbar } from "../components/partials/Navbar";
+import { IFile } from "../reducers/file";
+import { getFile } from "../reducers/file";
+import { fetchFile } from "../actions/file";
+
 
 const url = import.meta.env.VITE_URL;
 
 export default function EditorHome() {
 
+  const [file, setFile] = React.useState<IFile>({
+    content: "",
+    name: "",
+    updatedAt: new Date(),
+    createdAt: new Date(),
+    id: 0,
+    author: []
+  });
+
   const user = useAppSelector(getUser);
+  const File = useAppSelector(getFile);
+  const dispatch = useAppDispatch();
+  const { id } = useParams() as { id: string };
   const manager = new Manager(url, {
     autoConnect: false,
     query: { 'myusername_key': user.email },
   });
   const socket = manager.socket("/");
 
-
   React.useEffect(() => {
     socket.connect();
+    dispatch(fetchFile(parseInt(id)));
+
     return () => {
-      socket.disconnect();
+      socket.close();
+      // console.log('disconnected');
     }
-  });
+  }, []);
 
   // const sendop = {}
 
@@ -58,12 +78,10 @@ export default function EditorHome() {
 
 
   return (
-    <Grid sx={{height:'calc(100vh - 64px)',backgroundColor: '#e9e9e9'}}>
-      <NavbarMain />
-      <Container maxWidth="xl" sx={{ paddingTop:'40px',backgroundColor:'inherit',  minHeight:'100%', scrollbarGutter: 'stable both-edges' }}>
-        <EditorSocket user={user.email} socket={socket} filename={'filename'} />
-      </Container>
-    </Grid>
+    <div style={{ backgroundColor: '#dad7d7', height: '100%' }}>
+      <Navbar name={File?File.name:""} />
+      <EditorSocket user={user.email} socket={socket} filename={'filename'} />
+    </div>
     // <div style={{ marginLeft: '10px' }}>
     //   <h1>Editor team</h1>
     //   

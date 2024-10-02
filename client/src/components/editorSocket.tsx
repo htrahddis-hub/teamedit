@@ -47,7 +47,7 @@ export default function EditorSocket({ user, socket, filename }: IProps) {
   React.useEffect(() => {
     socket.on('fwd', (data) => {
       setOtherDelta(() => {
-        // console.log(JSON.stringify(data.delta.ops));
+        console.log(JSON.stringify(data.delta.ops));
         return data.delta;
       });
     });

@@ -7,7 +7,7 @@ import router from './routes';
 import dotenv from "dotenv";
 import { prisma } from "./prisma";
 import { createFileSocket } from "./controller/file";
-import { Delta } from "quill/core";
+// import { Delta } from "quill/core";
 import { operationHandler } from "./socket/operationHandler";
 
 const app = express();
@@ -42,7 +42,7 @@ io.on("connection", (socket) => {
 
 
   socket.on('disconnect', () => {
-    console.log(io.engine.clientsCount + "on disconnect");
+    console.log(io.engine.clientsCount + " on disconnect");
     console.log(socket.id);
   });
   socket.on('check', () => {

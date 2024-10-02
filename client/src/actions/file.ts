@@ -1,54 +1,25 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { IFile } from "../reducers/file";
-
+import { IStateF } from "../reducers/file";
 
 const url = import.meta.env.VITE_URL;
 
-
-export interface IResponse {
-  data: IFile[];
-  isFetched: boolean;
-  message: string;
-}
-
-
-export const fetch = createAsyncThunk("file/fetch", async (): Promise<IResponse> => {
+export const fetchFile = createAsyncThunk("file/create", async (fileId: number): Promise<IStateF> => {
   try {
     const token = decodeURIComponent(document.cookie);
     const token1 = token.substring(6);
-    const { data } = await axios.get(url + "fetchfiles", { headers: { 'authorization': `Bearer ${token1}` } });
+    const { data } = await axios.get(`${url}fetchfilebyid/${fileId}`, { headers: { 'authorization': `Bearer ${token1}` } });
 
     if (data.message === "successful")
-      return { isFetched: true, message: "successful", data: data.files };
+      return { value: data.value, message: "successful" };
     else if (data.message === "Failed")
-      return { isFetched: false, message: "Failed to fetch", data: [] };
+      return { message: "Failed to fetch" };
     else
-      return { isFetched: false, message: "Failed to fetch", data: [] };
+      return { message: "Failed to fetch" };
   } catch (err) {
     console.log(err);
     return {
-      isFetched: false, message: "Failed to fetch", data: []
-    };
-  }
-});
-
-export const create = createAsyncThunk("file/create", async (fileName: string): Promise<IResponse> => {
-  try {
-    const token = decodeURIComponent(document.cookie);
-    const token1 = token.substring(6);
-    const { data } = await axios.post(url + "createfile", { fileName: fileName }, { headers: { 'authorization': `Bearer ${token1}` } });
-
-    if (data.message === "successful")
-      return { data: [data.file], isFetched: true, message: "successful" };
-    else if (data.message === "Failed")
-      return { data: [], isFetched: false, message: "Failed to fetch" };
-    else
-      return { isFetched: false, message: "Failed to fetch", data: [] };
-  } catch (err) {
-    console.log(err);
-    return {
-      isFetched: false, message: "Failed to fetch", data: []
+      message: "Failed to fetch"
     };
   }
 });
