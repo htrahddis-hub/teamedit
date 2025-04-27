@@ -1,5 +1,5 @@
 import Delta from "quill-delta";
-import { Socket } from "socket.io";
+import { DefaultEventsMap, Server, Socket} from "socket.io";
 import {getDelta, setServerDelta} from '../controller/socket';
 
 interface msg {
@@ -12,12 +12,15 @@ var ops: Delta[];
 
 const servdelta=new Delta();
 
-export function operationHandler(socket: Socket) {
+export function operationHandler(socket: Socket,io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>) {
+
   socket.on('message', async (data) => {
-    // console.log(data.delta);
-    // console.log(data);
-    setServerDelta(data.delta);
-    const delta=await getDelta(4);
-    socket.broadcast.emit('fwd', delta);
+    console.log(data);
+    socket.to(data.roomId).emit('fwd', data.delta);
+  });
+  socket.on('message1', async (data) => {
+    console.log(data.delta);
+    console.log(data.roomId);
+    socket.to(data.roomId).emit('fwd1', data.delta);
   });
 }

@@ -3,13 +3,15 @@ import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import { Delta } from 'quill/core';
 import '../styles/QuillEditor.css';
+import { Socket } from 'socket.io-client';
 
 interface EditorProps {
   readOnly: boolean;
-  defaultValue?: Delta;  // Adjust the type of defaultValue based on the content Quill expects
-  otherDelta: Delta | null;
-  setDeltaArray: React.Dispatch<React.SetStateAction<Delta[]>>
-  setOtherDelta: (delta: Delta) => void
+  defaultValue?: string;  // Adjust the type of defaultValue based on the content Quill expects
+  otherDelta?: Delta | null;
+  setDeltaArray?: React.Dispatch<React.SetStateAction<Delta[]>>;
+  setOtherDelta?: (delta: Delta) => void;
+  socket : Socket;
 }
 
 const toolbarOptions = [
@@ -37,15 +39,15 @@ const toolbarOptions = [
 ];
 
 const QuillEditor = forwardRef<Quill | null, EditorProps>(
-  ({ readOnly, defaultValue, otherDelta, setDeltaArray, setOtherDelta }, ref) => {
+  ({ readOnly, defaultValue,socket }, ref) => {
+
+
+    const roomId = React.useRef('');
     const containerRef = useRef<HTMLDivElement>(null);
     const defaultValueRef = useRef(defaultValue);
-    const setDeltaArrayRef = useRef(setDeltaArray);
-    const setOtherDeltaRef = useRef(setOtherDelta);
+
     useLayoutEffect(() => {
-      setDeltaArrayRef.current = setDeltaArray;
       defaultValueRef.current = defaultValue;
-      setOtherDeltaRef.current = setOtherDelta;
     });
 
     useEffect(() => {
@@ -57,6 +59,13 @@ const QuillEditor = forwardRef<Quill | null, EditorProps>(
     useEffect(() => {
       const container = containerRef.current;
       if (!container) return;
+
+      socket.on('fwd1', (data) => {
+        console.log(data);
+        if (data) {
+          quill.updateContents(data);
+        }
+      });
 
       const editorContainer = container.appendChild(
         container.ownerDocument.createElement('div'),
@@ -70,34 +79,45 @@ const QuillEditor = forwardRef<Quill | null, EditorProps>(
         ref.current = quill;
       }
 
+      socket.on('joined1', (data) => {
+        console.log(data.roomId);
+        roomId.current=data.roomId;
+      });
+
       if (defaultValueRef.current) {
-        quill.setContents(defaultValueRef.current);
+        quill.setContents(new Delta(JSON.parse(defaultValueRef.current)));
       }
 
       quill.on('text-change', (delta, _oldDelta, source) => {
 
         if (source === 'user') {
+          console.log({ delta: delta, roomId:roomId.current});
           
-          setDeltaArrayRef.current?.(prev => {
-            return [...prev, delta];
-          });
+          socket.emit('message1', { delta: delta, roomId:roomId.current});
         }
         else {
-          setOtherDeltaRef.current?.(delta);
+          // setOtherDeltaRef.current?.(delta);
         }
       });
-
-      if (otherDelta) {
-        quill.updateContents(otherDelta);
-      }
 
       return () => {
         if (ref && 'current' in ref) {
           ref.current = null;
         }
+        socket.off('fwd1');
+        socket.off('joined1');
         container.innerHTML = '';
       };
-    }, [ref, otherDelta]);
+    }, [ref,defaultValue]);
+
+    // useEffect(() => {
+    //     socket.on('fwd', (data) => {
+    //       console.log(data);
+    //     });
+    //     return () => {
+    //       socket.off('fwd');
+    //     }
+    //   },[]);
 
     return <div ref={containerRef} ></div>;
   },

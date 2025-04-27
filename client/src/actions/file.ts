@@ -1,6 +1,12 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { IStateF } from "../reducers/file";
+import { Delta } from "quill/core";
+
+export interface IAction {
+  content: string;
+  message: string;
+}
 
 const url = import.meta.env.VITE_URL;
 
@@ -13,13 +19,43 @@ export const fetchFile = createAsyncThunk("file/create", async (fileId: number):
     if (data.message === "successful")
       return { value: data.value, message: "successful" };
     else if (data.message === "Failed")
-      return { message: "Failed to fetch" };
+      return {
+        value: {
+          content: '',
+          name: '',
+          updatedAt: '',
+          createdAt: '',
+          id: 0,
+        }, message: "Failed to fetch"
+      };
     else
-      return { message: "Failed to fetch" };
+      return {
+        value: {
+          content: '',
+          name: '',
+          updatedAt: '',
+          createdAt: '',
+          id: 0,
+        }, message: "Failed to fetch"
+      };
   } catch (err) {
     console.log(err);
     return {
-      message: "Failed to fetch"
+      value: {
+        content: '',
+        name: '',
+        updatedAt: '',
+        createdAt: '',
+        id: 0,
+      }, message: "Failed to fetch"
     };
+  }
+});
+
+export const updateFile = createAsyncThunk("file/update", async (content: string): Promise<IAction> => {
+  try {
+    return { content: content, message: 'successful' }
+  } catch (err) {
+    return { content: '{}', message: 'failed' };
   }
 });

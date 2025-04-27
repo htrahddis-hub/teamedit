@@ -1,9 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
-  fetchFile
+  fetchFile,
+  updateFile
 } from "../actions/file";
 import type { ActionReducerMapBuilder } from '@reduxjs/toolkit'
 import { RootState } from "../store";
+import { Delta } from "quill/core";
 
 
 export interface IAuthor {
@@ -19,23 +21,23 @@ export interface IFile {
   updatedAt: string;
   createdAt: string;
   id: number;
-  author: IAuthor[]
+  author?: IAuthor[]
 }
 
 export interface IStateF {
-  value?: IFile,
+  value: IFile,
   message: string
 }
-const date= new Date();
+const date = new Date();
 
 const initialState: IStateF = {
   value: {
-    content: "",
+    content: '{}',
     name: "",
     updatedAt: date.toISOString(),
     createdAt: date.toISOString(),
     id: 0,
-    author:[]
+    author: []
   },
   message: ""
 }
@@ -47,6 +49,14 @@ const fileSlice = createSlice({
   extraReducers: (builder: ActionReducerMapBuilder<IStateF>) => {
     builder.addCase(fetchFile.fulfilled, (state, action) => {
       state.value = action.payload.value;
+    });
+    builder.addCase(updateFile.fulfilled, (state, action) => {
+      if (action.payload.message === 'successful')
+        var prev= JSON.parse(state.value.content);
+        var change = JSON.parse(action.payload.content);
+        const prevDelta = new Delta(prev);
+        const changeDelta = new Delta(change);
+        state.value = {...state.value,content:JSON.stringify(prevDelta.compose(changeDelta))};
     });
   },
 });

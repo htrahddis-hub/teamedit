@@ -9,6 +9,7 @@ import { prisma } from "./prisma";
 import { createFileSocket } from "./controller/file";
 // import { Delta } from "quill/core";
 import { operationHandler } from "./socket/operationHandler";
+// import { saveRedis } from "./redis";
 
 const app = express();
 const httpServer = createServer(app);
@@ -35,34 +36,52 @@ app.use('/auth', router);
 
 // var fileData: Array<Delta> = [];
 
+app.get("/rooms", (req, res) => {
+  console.log(io.sockets.adapter.rooms);
+  res.send(JSON.stringify(io.sockets.adapter.rooms));
+});
+
 io.on("connection", (socket) => {
-  console.log(io.engine.clientsCount + "on connect");
+  console.log(io.engine.clientsCount + " on connect ");
+  console.log(socket.handshake.query.email);
+  console.log(socket.handshake.query.filename);
+  console.log(socket.handshake.query.id);
   console.log(socket.id);
-  console.log(socket.handshake.query.myusername_key);
-
-
+  const roomId: string = socket.handshake.query.filename + "_" + socket.handshake.query.id;
+  if (socket.handshake.query.filename) {
+    socket.on('authenticate', (data) => {
+      console.log(data);
+      socket.join(socket.handshake.query.filename + "_" + socket.handshake.query.id);
+      console.log("joined runs");
+      setTimeout(() => socket.emit('joined', { roomId: roomId }), 300);
+      setTimeout(() => socket.emit('joined1', { roomId: roomId }), 300);
+    })
+  }
   socket.on('disconnect', () => {
     console.log(io.engine.clientsCount + " on disconnect");
     console.log(socket.id);
   });
-  socket.on('check', () => {
-    console.log(io.engine.clientsCount + "no of sockets");
-    console.log(socket.id);
-  });
-
-    operationHandler(socket);
-
-  socket.on("join room", (data) => {
-    socket.join(data.room);
-  });
+  operationHandler(socket, io);
 
 
+  // // socket.on('message', async (data) => {
+  // //   console.log(data);
+  // // });
 
-  socket.on("createFile", (data) => {
-    console.log(data.user);
-    console.log(data.fileName);
-    createFileSocket(data.fileName, data.user).then((data) => console.log(data));
-  });
+  // socket.on('openFile',()=>{
+  //   console.log("data");
+  //   socket.emit('test',{hello:"world"});
+  //   // saveRedis();
+  // });
+  // socket.on("createFile", (data) => {
+  //   console.log(data.user);
+  //   console.log(data.fileName);
+  //   createFileSocket(data.fileName, data.user).then((data) => console.log(data));
+  // });
+
+  // socket.on("join room", (data) => {
+  //   socket.join(data.room);
+  // }); 
 
 });
 

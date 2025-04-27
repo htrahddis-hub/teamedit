@@ -1,36 +1,47 @@
 import React from "react";
 import { Manager } from "socket.io-client";
-import { useAppDispatch, useAppSelector } from "../store";
+import { useAppSelector } from "../store";
 import { getUser } from "../reducers/user";
 import EditorSocket from "../components/editorSocket";
 import { useParams } from "react-router-dom";
 import { Navbar } from "../components/partials/Navbar";
-import { getFile } from "../reducers/file";
-import { fetchFile } from "../actions/file";
+import { getFiles } from "../reducers/fileList";
 
 
 const url = import.meta.env.VITE_URL;
 
 export default function EditorHome() {
   const user = useAppSelector(getUser);
-  const File = useAppSelector(getFile);
-  const dispatch = useAppDispatch();
+  const FileList = useAppSelector(getFiles);
   const { id } = useParams() as { id: string };
+  const filename = FileList.data.find(file => file.id==parseInt(id))?.name;
+
+  const [isConnected, setIsConnected] = React.useState(false);
+  // console.log("Parent rendered at:", new Date().toISOString());
+  // console.log("is connected"+isConnected);
   const manager = new Manager(url, {
     autoConnect: false,
-    query: { 'myusername_key': user.email },
+    query: { 'email': user.email, filename: filename, id: id },
   });
-  const socket = manager.socket("/");
+
+  const socketRef:any= React.useRef(null);
+
+  
 
   React.useEffect(() => {
-    socket.connect();
-    dispatch(fetchFile(parseInt(id)));
+    socketRef.current = manager.socket("/");
+    socketRef.current.connect();
 
+    socketRef.current.on("connect", () => {
+      const token = decodeURIComponent(document.cookie).substring(6);
+      socketRef.current.emit('authenticate',{token:'Bearer '+token})
+      setIsConnected(true); // Update state so child re-renders with socket
+    });
     return () => {
-      socket.close();
-      // console.log('disconnected');
+      socketRef.current.disconnect();
     }
-  }, []);
+  },[]);
+  const socketChild = React.useMemo(() => socketRef.current, [isConnected]);
 
   // const sendop = {}
 
@@ -66,8 +77,9 @@ export default function EditorHome() {
 
   return (
     <div style={{ backgroundColor: '#dad7d7', height: '100%' }}>
-      <Navbar name={File?File.name:""} />
-      <EditorSocket user={user.email} socket={socket} filename={'filename'} />
+      <Navbar name={filename?filename:""} />
+      {isConnected ?<EditorSocket user={user.email} socket={socketChild} filename={'filename'} />: <p>Connecting...</p>}
+      <button>save</button>
     </div>
     // <div style={{ marginLeft: '10px' }}>
     //   <h1>Editor team</h1>
