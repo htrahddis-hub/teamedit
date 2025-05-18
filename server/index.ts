@@ -6,6 +6,7 @@ import bodyParser from "body-parser";
 import router from './routes';
 import dotenv from "dotenv";
 import { prisma } from "./prisma";
+import jwt from "jsonwebtoken";
 import { createFileSocket } from "./controller/file";
 // import { Delta } from "quill/core";
 import { operationHandler } from "./socket/operationHandler";
@@ -41,21 +42,51 @@ app.get("/rooms", (req, res) => {
   res.send(JSON.stringify(io.sockets.adapter.rooms));
 });
 
+async function isValidToken(token: string): Promise<boolean> {
+  try {
+    // const token = req.headers?.authorization as string;
+
+    if (token.startsWith("Bearer")) {
+
+      const decoded: any = jwt.verify(token.substring(7), process.env.TOP_SECRET as string);
+      const User = await prisma.user.findUnique({
+        where: {
+          id: decoded.User_Id,
+        },
+      });
+      // console.log(User?.token);
+      // console.log(token.substring(7));
+
+      if (User?.token === token.substring(7)) {
+        return true;
+      }
+      else
+        return false;
+    }
+    else
+      return false;
+  }
+  catch (err) {
+    console.log(err);
+    return false;
+  }
+}
+
 io.on("connection", (socket) => {
   console.log(io.engine.clientsCount + " on connect ");
-  console.log(socket.handshake.query.email);
-  console.log(socket.handshake.query.filename);
-  console.log(socket.handshake.query.id);
-  console.log(socket.id);
+  console.log(socket.handshake.query);
   const roomId: string = socket.handshake.query.filename + "_" + socket.handshake.query.id;
   if (socket.handshake.query.filename) {
-    socket.on('authenticate', (data) => {
+    socket.on('authenticate', async (data) => {
       console.log(data);
-      socket.join(socket.handshake.query.filename + "_" + socket.handshake.query.id);
-      console.log("joined runs");
-      setTimeout(() => socket.emit('joined', { roomId: roomId }), 300);
-      setTimeout(() => socket.emit('joined1', { roomId: roomId }), 300);
-    })
+      if (await isValidToken(data.token)) {
+        socket.join(socket.handshake.query.filename + "_" + socket.handshake.query.id);
+        console.log("room joined");
+        setTimeout(() => socket.emit('joined', { roomId: roomId }), 300);
+      } else {
+        socket.disconnect();
+      }
+    });
   }
   socket.on('disconnect', () => {
     console.log(io.engine.clientsCount + " on disconnect");
@@ -64,9 +95,9 @@ io.on("connection", (socket) => {
   operationHandler(socket, io);
 
 
-  // // socket.on('message', async (data) => {
-  // //   console.log(data);
-  // // });
+  // socket.on('message', async (data) => {
+  //   console.log(data);
+  // });
 
   // socket.on('openFile',()=>{
   //   console.log("data");

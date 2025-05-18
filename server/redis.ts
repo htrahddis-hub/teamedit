@@ -1,13 +1,16 @@
 import { createClient } from 'redis';
 
 const client = createClient({
-  username: 'server',
-  password: 'A66GUi!r38@MxH3',
+  username: process.env.REDIS_USERNAME,
+  password: process.env.REDIS_PASSWORD,
   socket: {
-    host: 'redis-10079.crce182.ap-south-1-1.ec2.redns.redis-cloud.com',
-    port: 10079
+    host: process.env.REDIS_HOST,
+    port: parseInt(process.env.REDIS_PORT?process.env.REDIS_PORT:'')
   }
 });
+
+// console.log(client);
+
 
 export async function saveRedis(key: string, value: string): Promise<string> {
   try {

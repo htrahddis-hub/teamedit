@@ -14,7 +14,7 @@ export default function EditorHome() {
   const user = useAppSelector(getUser);
   const FileList = useAppSelector(getFiles);
   const { id } = useParams() as { id: string };
-  const filename = FileList.data.find(file => file.id==parseInt(id))?.name;
+  const filename = FileList.data.find(file => file.id == parseInt(id))?.name;
 
   const [isConnected, setIsConnected] = React.useState(false);
   // console.log("Parent rendered at:", new Date().toISOString());
@@ -24,9 +24,9 @@ export default function EditorHome() {
     query: { 'email': user.email, filename: filename, id: id },
   });
 
-  const socketRef:any= React.useRef(null);
+  const socketRef: any = React.useRef(null);
 
-  
+
 
   React.useEffect(() => {
     socketRef.current = manager.socket("/");
@@ -34,51 +34,19 @@ export default function EditorHome() {
 
     socketRef.current.on("connect", () => {
       const token = decodeURIComponent(document.cookie).substring(6);
-      socketRef.current.emit('authenticate',{token:'Bearer '+token})
+      socketRef.current.emit('authenticate', { token: 'Bearer ' + token });
       setIsConnected(true); // Update state so child re-renders with socket
     });
     return () => {
       socketRef.current.disconnect();
     }
-  },[]);
+  }, []);
   const socketChild = React.useMemo(() => socketRef.current, [isConnected]);
-
-  // const sendop = {}
-
-  // const [fileLoaded, setFileLoaded] = React.useState<boolean>(false);
-  // const [filename, setFilename] = React.useState<string>('test');
-
-  // const createFile = (name: string) => {
-  //   // console.log("here");
-  //   socket.emit('createFile', { fileName: name, user: user.email });
-  // }
-
-
-  // const handleClick = () => {
-  //   socket.emit('check', { i: 'did' })
-
-  // };
-
-  // const handleClick1 = () => {
-  //   socket.disconnect();
-  // }
-
-  // const handleClick2 = () => {
-  //   socket.connect();
-  // }
-
-
-  // const handleChange = () => {
-  //   setFileLoaded((prev) => {
-  //     return !prev;
-  //   })
-  // };
-
 
   return (
     <div style={{ backgroundColor: '#dad7d7', height: '100%' }}>
-      <Navbar name={filename?filename:""} />
-      {isConnected ?<EditorSocket user={user.email} socket={socketChild} filename={'filename'} />: <p>Connecting...</p>}
+      <Navbar name={filename ? filename : ""} />
+      {isConnected ? <EditorSocket socket={socketChild} /> : <p>Connecting...</p>}
       <button>save</button>
     </div>
     // <div style={{ marginLeft: '10px' }}>
@@ -88,5 +56,36 @@ export default function EditorHome() {
     //   <button onClick={handleClick1}>disconnect</button>
     //   <button onClick={handleClick2}>connect</button>
     // </div>
+
+    // const sendop = {}
+
+    // const [fileLoaded, setFileLoaded] = React.useState<boolean>(false);
+    // const [filename, setFilename] = React.useState<string>('test');
+
+    // const createFile = (name: string) => {
+    //   // console.log("here");
+    //   socket.emit('createFile', { fileName: name, user: user.email });
+    // }
+
+
+    // const handleClick = () => {
+    //   socket.emit('check', { i: 'did' })
+
+    // };
+
+    // const handleClick1 = () => {
+    //   socket.disconnect();
+    // }
+
+    // const handleClick2 = () => {
+    //   socket.connect();
+    // }
+
+
+    // const handleChange = () => {
+    //   setFileLoaded((prev) => {
+    //     return !prev;
+    //   })
+    // };
   );
 }

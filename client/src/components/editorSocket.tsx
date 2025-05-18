@@ -5,20 +5,11 @@ import { Socket } from 'socket.io-client';
 import QuillEditor from './QuillEditor';
 
 
-export interface IOperation {
-  insert?: string,
-  delete?: string
-}
-export interface IOps {
-  ops: IOperation[]
-}
 export interface IProps {
-  user: string,
-  filename: string,
   socket: Socket
 }
 
-export default function EditorSocket({ user, socket, filename }: IProps) {
+export default function EditorSocket({socket}: IProps) {
 
   const quillRef = React.useRef<Quill | null>(null);
 

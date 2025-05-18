@@ -41,7 +41,6 @@ const toolbarOptions = [
 const QuillEditor = forwardRef<Quill | null, EditorProps>(
   ({ readOnly, defaultValue,socket }, ref) => {
 
-
     const roomId = React.useRef('');
     const containerRef = useRef<HTMLDivElement>(null);
     const defaultValueRef = useRef(defaultValue);
@@ -60,7 +59,7 @@ const QuillEditor = forwardRef<Quill | null, EditorProps>(
       const container = containerRef.current;
       if (!container) return;
 
-      socket.on('fwd1', (data) => {
+      socket.on('fwd', (data) => {
         console.log(data);
         if (data) {
           quill.updateContents(data);
@@ -79,7 +78,7 @@ const QuillEditor = forwardRef<Quill | null, EditorProps>(
         ref.current = quill;
       }
 
-      socket.on('joined1', (data) => {
+      socket.on('joined', (data) => {
         console.log(data.roomId);
         roomId.current=data.roomId;
       });
@@ -93,7 +92,7 @@ const QuillEditor = forwardRef<Quill | null, EditorProps>(
         if (source === 'user') {
           console.log({ delta: delta, roomId:roomId.current});
           
-          socket.emit('message1', { delta: delta, roomId:roomId.current});
+          socket.emit('message', { delta: delta, roomId:roomId.current});
         }
         else {
           // setOtherDeltaRef.current?.(delta);
@@ -104,8 +103,8 @@ const QuillEditor = forwardRef<Quill | null, EditorProps>(
         if (ref && 'current' in ref) {
           ref.current = null;
         }
-        socket.off('fwd1');
-        socket.off('joined1');
+        socket.off('fwd');
+        socket.off('joined');
         container.innerHTML = '';
       };
     }, [ref,defaultValue]);
